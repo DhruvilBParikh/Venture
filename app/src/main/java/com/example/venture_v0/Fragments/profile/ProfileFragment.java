@@ -1,4 +1,4 @@
-package com.example.venture_v0;
+package com.example.venture_v0.Fragments.profile;
 
 
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.example.venture_v0.MainActivity;
+import com.example.venture_v0.R;
 
 
 /**

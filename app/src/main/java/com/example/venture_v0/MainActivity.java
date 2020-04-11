@@ -12,7 +12,9 @@ import android.view.MenuItem;
 import com.example.venture_v0.Fragments.addevent.AddEventFragment;
 import com.example.venture_v0.Fragments.explore.ExploreFragment;
 import com.example.venture_v0.Fragments.history.HistoryFragment;
+import com.example.venture_v0.Fragments.loginSignup.LoginSignupFragment;
 import com.example.venture_v0.Fragments.plan.PlanFragment;
+import com.example.venture_v0.Fragments.profile.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,12 +23,22 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigation;
     private Boolean isLoggedIn;
-    private Fragment exploreFragment = ExploreFragment.newInstance("", "");
-    private Fragment planFragment = PlanFragment.newInstance("", "");
+    private Fragment exploreFragment;
+    private Fragment planFragment ;
+    private Fragment addEventFragment;
+    private Fragment historyFragment;
+    private Fragment profileFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        exploreFragment = ExploreFragment.newInstance("", "");
+        planFragment = PlanFragment.newInstance("", "");
+        addEventFragment = AddEventFragment.newInstance("", "");
+        historyFragment = HistoryFragment.newInstance("", "");
+        profileFragment = ProfileFragment.newInstance("", "");
+
         setContentView(R.layout.activity_main);
 
         isLoggedIn = checkSession();
@@ -52,13 +64,13 @@ public class MainActivity extends AppCompatActivity {
                     transaction.replace(R.id.container, planFragment, tag);
                     break;
                 case "ADDEVENT":
-                    transaction.replace(R.id.container, AddEventFragment.newInstance("", ""), tag);
+                    transaction.replace(R.id.container, addEventFragment, tag);
                     break;
                 case "HISTORY":
-                    transaction.replace(R.id.container, HistoryFragment.newInstance("", ""), tag);
+                    transaction.replace(R.id.container, historyFragment, tag);
                     break;
                 case "PROFILE":
-                    transaction.replace(R.id.container, ProfileFragment.newInstance("", ""), tag);
+                    transaction.replace(R.id.container, profileFragment, tag);:equals(q)
                     break;
             }
         }

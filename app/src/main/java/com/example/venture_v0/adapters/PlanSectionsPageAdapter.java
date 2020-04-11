@@ -7,30 +7,30 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExploreSectionsPageAdapter extends FragmentPagerAdapter {
-    private final List<Fragment> exploreFragmentList = new ArrayList<>();
-    private final List<String> exploreFragmentTitleList = new ArrayList<>();
+public class PlanSectionsPageAdapter extends FragmentPagerAdapter {
+    private final List<Fragment> planFragmentList = new ArrayList<>();
+    private final List<String> planFragmentTitleList = new ArrayList<>();
 
     public void addFragment(Fragment fragment, String title) {
-        exploreFragmentList.add(fragment);
-        exploreFragmentTitleList.add(title);
+        planFragmentList.add(fragment);
+        planFragmentTitleList.add(title);
     }
 
-    public ExploreSectionsPageAdapter(FragmentManager fm) {
+    public PlanSectionsPageAdapter(FragmentManager fm) {
         super(fm);
     }
     @Override
     public CharSequence getPageTitle(int position) {
-        return exploreFragmentTitleList.get(position);
+        return planFragmentTitleList.get(position);
     }
 
     @Override
     public Fragment getItem(int position) {
-        return exploreFragmentList.get(position);
+        return planFragmentList.get(position);
     }
 
     @Override
     public int getCount() {
-        return exploreFragmentList.size();
+        return planFragmentList.size();
     }
 }
