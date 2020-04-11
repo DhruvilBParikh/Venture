@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     transaction.replace(R.id.container, historyFragment, tag);
                     break;
                 case "PROFILE":
-                    transaction.replace(R.id.container, profileFragment, tag);:equals(q)
+                    transaction.replace(R.id.container, profileFragment, tag);
                     break;
             }
         }
