@@ -19,6 +19,8 @@ import android.widget.Button;
  */
 public class LoginSignupFragment extends Fragment {
 
+
+
     private static final String TAG = "LoginSignupFragment";
 
     // TODO: Rename parameter arguments, choose names that match
@@ -33,7 +35,7 @@ public class LoginSignupFragment extends Fragment {
     private Button button;
 
 
-    public LoginSignupFragment() {
+    private LoginSignupFragment() {
         // Required empty public constructor
     }
 
@@ -47,6 +49,7 @@ public class LoginSignupFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static LoginSignupFragment newInstance(String param1, String param2) {
+
         LoginSignupFragment fragment = new LoginSignupFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);

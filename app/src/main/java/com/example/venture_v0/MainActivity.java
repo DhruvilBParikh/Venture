@@ -5,14 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.example.venture_v0.Fragments.addevent.AddEventFragment;
+import com.example.venture_v0.Fragments.explore.ExploreFragment;
+import com.example.venture_v0.Fragments.history.HistoryFragment;
+import com.example.venture_v0.Fragments.plan.PlanFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import static com.example.venture_v0.ExploreFragment.newInstance;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigation;
     private Boolean isLoggedIn;
+    private Fragment exploreFragment = ExploreFragment.newInstance("", "");
+    private Fragment planFragment = PlanFragment.newInstance("", "");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +46,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             switch(tag){
                 case "EXPLORE":
-                    transaction.replace(R.id.container, ExploreFragment.newInstance("", ""), tag);
+                    transaction.replace(R.id.container, exploreFragment, tag);
                     break;
                 case "PLAN":
-                    transaction.replace(R.id.container, PlanFragment.newInstance("", ""), tag);
+                    transaction.replace(R.id.container, planFragment, tag);
                     break;
                 case "ADDEVENT":
                     transaction.replace(R.id.container, AddEventFragment.newInstance("", ""), tag);
