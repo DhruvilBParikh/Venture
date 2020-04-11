@@ -1,6 +1,25 @@
 <resources>
     <string name="app_name">Venture_v0</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--  LoginSignupFragment  -->
+    <string name="login">LOGIN</string>
+    <string name="signup">SIGNUP</string>
+    <string name="loginSignupImage">LoginSignupImage</string>
+    <string name="loginSignupTitle">Adventure awaits</string>
+    <string name="loginSignupSubtitle">Please login or signup to access this feature.</string>
+
+    <!--  SignupFragment  -->
+    <string name="signupImage">SignupImage</string>
+    <string name="signupSubtitle">Create an account to \nsave your progress.</string>
+    <string name="signupName">Name</string>
+    <string name="signupEmail">Email</string>
+    <string name="signupPassword">Password</string>
+    <string name="requiredField">* This field is required</string>
+    <string name="invalidEmail">* Enter a valid email</string>
+
+    <!--  LoginFragment  -->
+    <string name="loginSubtitle">Welcome back.\nLog in and let\'s get going.</string>
+
 </resources>
