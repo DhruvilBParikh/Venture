@@ -3,17 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.loginSignup.LoginSignupFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".Fragments.loginSignup.LoginSignupFragment">
 
     <ImageView
         android:id="@+id/loginSignupImage"
         android:layout_width="match_parent"
         android:layout_height="280dp"
-        android:src="@drawable/adventure"
+        android:contentDescription="@string/loginSignupImage"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:contentDescription="@string/loginSignupImage"/>
+        android:src="@drawable/adventure" />
 
     <TextView
         android:id="@+id/loginSignupTitle"
@@ -23,38 +23,38 @@
         android:paddingRight="16dp"
         android:text="@string/loginSignupTitle"
         android:textSize="30sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/loginSignupSubtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/loginSignupSubtitle"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingBottom="40dp"/>
+        android:paddingBottom="40dp"
+        android:text="@string/loginSignupSubtitle" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_horizontal" >
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
 
         <Button
+            android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/login_button"
-            android:text="@string/login"
             android:width="1in"
             android:backgroundTint="@color/colorPrimary"
-            android:textColor="@color/white"/>
+            android:text="@string/login"
+            android:textColor="@color/white" />
 
         <Button
+            android:id="@+id/signup_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/signup_button"
-            android:text="@string/signup"
-            android:width="1in"/>
+            android:width="1in"
+            android:text="@string/signup" />
 
     </LinearLayout>
 

@@ -19,6 +19,7 @@ public class ExploreSectionsPageAdapter extends FragmentPagerAdapter {
     public ExploreSectionsPageAdapter(FragmentManager fm) {
         super(fm);
     }
+
     @Override
     public CharSequence getPageTitle(int position) {
         return exploreFragmentTitleList.get(position);

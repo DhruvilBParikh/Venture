@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private Boolean isLoggedIn;
 
     private Fragment exploreFragment;
-    private Fragment planFragment ;
+    private Fragment planFragment;
     private Fragment addEventFragment;
     private Fragment historyFragment;
     private Fragment profileFragment;
@@ -57,25 +57,25 @@ public class MainActivity extends AppCompatActivity {
         Boolean loginPrompt = !(tag.equals("EXPLORE") || isLoggedIn);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        if(loginPrompt) {
+        if (loginPrompt) {
             Log.d(TAG, "openFragment: user not logged in");
             transaction.replace(R.id.container, new LoginSignupFragment(), tag);
         } else {
-            switch(tag){
+            switch (tag) {
                 case "EXPLORE":
-                    transaction.replace(R.id.container, exploreFragment , tag);
+                    transaction.replace(R.id.container, exploreFragment, tag);
                     break;
                 case "PLAN":
-                    transaction.replace(R.id.container, planFragment , tag);
+                    transaction.replace(R.id.container, planFragment, tag);
                     break;
                 case "ADDEVENT":
-                    transaction.replace(R.id.container, addEventFragment , tag);
+                    transaction.replace(R.id.container, addEventFragment, tag);
                     break;
                 case "HISTORY":
-                    transaction.replace(R.id.container, historyFragment , tag);
+                    transaction.replace(R.id.container, historyFragment, tag);
                     break;
                 case "PROFILE":
-                    transaction.replace(R.id.container, profileFragment , tag);
+                    transaction.replace(R.id.container, profileFragment, tag);
                     break;
             }
         }
@@ -126,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.item_explore:
                             Log.d(TAG, "onNavigationItemSelected: explore clicked");

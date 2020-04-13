@@ -19,6 +19,7 @@ public class PlanSectionsPageAdapter extends FragmentPagerAdapter {
     public PlanSectionsPageAdapter(FragmentManager fm) {
         super(fm);
     }
+
     @Override
     public CharSequence getPageTitle(int position) {
         return planFragmentTitleList.get(position);
