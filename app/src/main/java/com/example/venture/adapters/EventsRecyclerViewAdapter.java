@@ -1,4 +1,4 @@
-package com.example.venture_v0.adapters;
+package com.example.venture.adapters;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -15,8 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.venture_v0.Fragments.explore.ExploreEventListFragment;
-import com.example.venture_v0.R;
+import com.example.venture.Fragments.explore.ExploreEventListFragment;
+import com.example.venture.R;
 
 import java.util.ArrayList;
 
