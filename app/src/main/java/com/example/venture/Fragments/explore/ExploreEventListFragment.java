@@ -17,8 +17,8 @@ import android.view.ViewGroup;
 
 import com.example.venture.R;
 import com.example.venture.adapters.EventsRecyclerViewAdapter;
-import com.example.venture_v0.models.Event;
-import com.example.venture_v0.viewmodels.explore.ExploreEventListFragmentViewModel;
+import com.example.venture.models.Event;
+import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

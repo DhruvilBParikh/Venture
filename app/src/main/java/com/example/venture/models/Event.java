@@ -1,4 +1,4 @@
-package com.example.venture_v0.models;
+package com.example.venture.models;
 
 public class Event {
 

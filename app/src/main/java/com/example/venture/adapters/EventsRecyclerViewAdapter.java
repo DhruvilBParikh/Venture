@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.venture.Fragments.explore.ExploreEventListFragment;
 import com.example.venture.R;
-import com.example.venture_v0.models.Event;
+import com.example.venture.models.Event;
 
 import java.util.List;
 

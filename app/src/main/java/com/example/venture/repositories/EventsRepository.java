@@ -1,4 +1,4 @@
-package com.example.venture_v0.repositories;
+package com.example.venture.repositories;
 
 /*
  * Singleton pattern
@@ -6,7 +6,7 @@ package com.example.venture_v0.repositories;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.venture_v0.models.Event;
+import com.example.venture.models.Event;
 
 import java.util.ArrayList;
 import java.util.List;

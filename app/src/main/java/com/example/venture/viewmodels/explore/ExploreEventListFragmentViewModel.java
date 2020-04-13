@@ -1,11 +1,11 @@
-package com.example.venture_v0.viewmodels.explore;
+package com.example.venture.viewmodels.explore;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.venture_v0.models.Event;
-import com.example.venture_v0.repositories.EventsRepository;
+import com.example.venture.models.Event;
+import com.example.venture.repositories.EventsRepository;
 
 import java.util.List;
 
