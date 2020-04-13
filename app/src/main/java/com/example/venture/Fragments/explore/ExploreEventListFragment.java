@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,8 +17,11 @@ import android.view.ViewGroup;
 
 import com.example.venture.R;
 import com.example.venture.adapters.EventsRecyclerViewAdapter;
+import com.example.venture_v0.models.Event;
+import com.example.venture_v0.viewmodels.explore.ExploreEventListFragmentViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -30,10 +36,11 @@ public class ExploreEventListFragment extends Fragment {
 
     private static final String TAG = "ExploreEventListFragment";
 
+    private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
+
     //vars
-    private ArrayList<String> mImage = new ArrayList<>();
-    private ArrayList<String> mEventName = new ArrayList<>();
-    private ArrayList<String> mEventLocation = new ArrayList<>();
+    private EventsRecyclerViewAdapter madapter;
+    private RecyclerView mrecyclerView;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -45,7 +52,6 @@ public class ExploreEventListFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-//    private OnFragmentInteractionListener mListener;
 
     public ExploreEventListFragment() {
         // Required empty public constructor
@@ -84,74 +90,36 @@ public class ExploreEventListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_explore_event_list, container, false);
+        mrecyclerView = view.findViewById(R.id.event_list_recyclerview);
         Log.d(TAG, "onCreateView: started.");
         initData(view);
         return view;
     }
+
     @SuppressLint("LongLogTag")
-    private void initData(View view){
+    private void initData(View view) {
         Log.d(TAG, "initData: preparing data.");
+        mExploreEventListFragmentViewModel = ViewModelProviders.of(this).get(ExploreEventListFragmentViewModel.class);
+        mExploreEventListFragmentViewModel.init();
+        mExploreEventListFragmentViewModel.getEvents().observe(this, new Observer<List<Event>>() {
+            @Override
+            public void onChanged(List<Event> events) {
+                madapter.notifyDataSetChanged();
 
-        mImage.add("trial_image.jpg");
-        mEventName.add("A Walk to Remember");
-        mEventLocation.add("Santa Cruz");
-
-        mImage.add("sf_trail.jpg");
-        mEventName.add("Second Walk to Remember");
-        mEventLocation.add("San Francicso");
-
-        mImage.add("sf_trail.jpg");
-        mEventName.add("Third Walk to Remember");
-        mEventLocation.add("San Mateo");
+            }
+        });
 
         initRecyclerView(view);
     }
 
     @SuppressLint("LongLogTag")
-    private void initRecyclerView(View view){
+    private void initRecyclerView(View view) {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
-        RecyclerView recyclerView = view.findViewById(R.id.event_list_recyclerview);
-        EventsRecyclerViewAdapter adapter = new EventsRecyclerViewAdapter(getContext(), mImage,mEventName, mEventLocation);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        madapter = new EventsRecyclerViewAdapter(getContext(), mExploreEventListFragmentViewModel.getEvents().getValue());
+        mrecyclerView.setAdapter(madapter);
+        mrecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
 
-//    /**
-//     * This interface must be implemented by activities that contain this
-//     * fragment to allow an interaction in this fragment to be communicated
-//     * to the activity and potentially other fragments contained in that
-//     * activity.
-//     * <p>
-//     * See the Android Training lesson <a href=
-//     * "http://developer.android.com/training/basics/fragments/communicating.html"
-//     * >Communicating with Other Fragments</a> for more information.
-//     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
 }

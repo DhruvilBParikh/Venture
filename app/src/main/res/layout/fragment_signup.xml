@@ -3,81 +3,81 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.signup.SignupFragment"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="@color/white">
+    tools:context=".Fragments.signup.SignupFragment">
 
     <ImageView
         android:id="@+id/loginSignupImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/compasslogo"
         android:layout_gravity="center"
-        android:contentDescription="@string/signupImage"/>
+        android:contentDescription="@string/signupImage"
+        android:src="@drawable/compasslogo" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/signupSubtitle"
         android:layout_gravity="center_horizontal"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textAlignment="center"
         android:paddingTop="16dp"
-        android:paddingBottom="16dp"/>
+        android:paddingBottom="16dp"
+        android:text="@string/signupSubtitle"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
 
     <EditText
+        android:id="@+id/nameText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/nameText"
         android:hint="@string/signupName"
-        android:inputType="text"/>
+        android:inputType="text" />
 
     <TextView
+        android:id="@+id/invalidName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/requiredField"
-        android:id="@+id/invalidName"
         android:textColor="@color/red"
         android:visibility="gone" />
 
     <EditText
+        android:id="@+id/emailText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/emailText"
         android:hint="@string/signupEmail"
-        android:inputType="textWebEmailAddress"/>
+        android:inputType="textWebEmailAddress" />
 
     <TextView
+        android:id="@+id/invalidEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/invalidEmail"
-        android:id="@+id/invalidEmail"
         android:textColor="@color/red"
         android:visibility="gone" />
 
     <EditText
+        android:id="@+id/passwordText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/passwordText"
         android:hint="@string/signupPassword"
         android:inputType="textPassword" />
 
     <TextView
+        android:id="@+id/invalidPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/requiredField"
-        android:id="@+id/invalidPassword"
         android:textColor="@color/red"
         android:visibility="gone" />
 
     <Button
+        android:id="@+id/signup_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/signup_button"
-        android:text="@string/signup"
         android:backgroundTint="@color/colorPrimary"
+        android:text="@string/signup"
         android:textColor="@color/white" />
 
 </LinearLayout>
