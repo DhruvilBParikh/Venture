@@ -2,6 +2,7 @@ package com.example.venture;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
@@ -25,9 +26,24 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigation;
     private Boolean isLoggedIn;
 
+    private Fragment exploreFragment;
+    private Fragment planFragment ;
+    private Fragment addEventFragment;
+    private Fragment historyFragment;
+    private Fragment profileFragment;
+    private Fragment loginSignupFragment;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        exploreFragment = new ExploreFragment();
+        planFragment = new PlanFragment();
+        addEventFragment = new AddEventFragment();
+        historyFragment = new HistoryFragment();
+        profileFragment = new ProfileFragment();
+        loginSignupFragment = new LoginSignupFragment();
+
         setContentView(R.layout.activity_main);
 
 //        isLoggedIn = checkSession();
@@ -53,20 +69,20 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(tag);
             switch(tag){
                 case "EXPLORE":
-                    transaction.replace(R.id.container, new ExploreFragment(), tag);
+                    transaction.replace(R.id.container, exploreFragment , tag);
                     break;
                 case "PLAN":
-                    transaction.replace(R.id.container, new PlanFragment(), tag);
+                    transaction.replace(R.id.container, planFragment , tag);
                     break;
                 case "ADDEVENT":
                     getSupportActionBar().setTitle("ADD EVENT");
                     transaction.replace(R.id.container, new AddEventFragment(), tag);
                     break;
                 case "HISTORY":
-                    transaction.replace(R.id.container, new HistoryFragment(), tag);
+                    transaction.replace(R.id.container, historyFragment , tag);
                     break;
                 case "PROFILE":
-                    transaction.replace(R.id.container, new ProfileFragment(), tag);
+                    transaction.replace(R.id.container, profileFragment , tag);
                     break;
             }
         }
