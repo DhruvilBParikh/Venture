@@ -59,7 +59,7 @@ public class SignupFragment extends Fragment {
         emailText = view.findViewById(R.id.emailText);
         passwordText = view.findViewById(R.id.passwordText);
         mAuth = FirebaseAuth.getInstance();
-        usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        usersViewModel = new ViewModelProvider(requireActivity()).get(UsersViewModel.class);
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
