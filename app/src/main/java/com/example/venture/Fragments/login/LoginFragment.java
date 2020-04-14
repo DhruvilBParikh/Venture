@@ -3,7 +3,9 @@ package com.example.venture.Fragments.login;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,9 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.venture.MainActivity;
 import com.example.venture.R;
+import com.example.venture.models.User;
+import com.example.venture.viewmodels.explore.UsersViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +39,8 @@ public class LoginFragment extends Fragment {
     private View view;
     private Button loginButton;
     private TextView emailText, passwordText;
+    private FirebaseAuth mAuth;
+    private UsersViewModel usersViewModel;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -45,25 +57,28 @@ public class LoginFragment extends Fragment {
         loginButton = view.findViewById(R.id.login_button);
         emailText = view.findViewById(R.id.emailText);
         passwordText = view.findViewById(R.id.passwordText);
+        mAuth = FirebaseAuth.getInstance();
+        usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean email = emailCheck();
-                boolean password = passwordCheck();
 
-                if(email && password) {
+                boolean emailCheck = emailCheck();
+                boolean passwordCheck = passwordCheck();
+                if(emailCheck && passwordCheck) {
                     // handle login code
-
-                    ((MainActivity)getActivity()).logsIn(getTag());
+                    String email = emailText.getText().toString();
+                    String password = passwordText.getText().toString();
+                    signIn(email, password);
                 } else {
-                    if(!email) {
+                    if(!emailCheck) {
                         Log.d(TAG, "onClick: invalid email message");
                         view.findViewById(R.id.invalidEmail).setVisibility(View.VISIBLE);
                     } else {
                         view.findViewById(R.id.invalidEmail).setVisibility(View.GONE);
                     }
-                    if(!password) {
+                    if(!passwordCheck) {
                         Log.d(TAG, "onClick: invalid password message");
                         view.findViewById(R.id.invalidPassword).setVisibility(View.VISIBLE);
                     } else {
@@ -76,6 +91,28 @@ public class LoginFragment extends Fragment {
         return view;
     }
 
+    public void signIn(final String email, String password) {
+        Log.d(TAG, "signIn: email:"+email+":pass:"+ password);
+
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithEmail:success");
+                    FirebaseUser currentUser = mAuth.getCurrentUser();
+                    ((MainActivity) getActivity()).logsIn(getTag(), currentUser);
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithEmail:failure", task.getException());
+                    Toast.makeText(getActivity().getApplicationContext(), task.getException().getMessage(),
+                            Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+    }
+
     public boolean passwordCheck() {
         String password = passwordText.getText().toString();
         if(password.equals("")) {
@@ -85,8 +122,7 @@ public class LoginFragment extends Fragment {
         return true;
     }
 
-    public boolean emailCheck()
-    {
+    public boolean emailCheck() {
         String regExpn =
                 "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
                         +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"

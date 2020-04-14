@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -99,9 +100,9 @@ public class ExploreEventListFragment extends Fragment {
     @SuppressLint("LongLogTag")
     private void initData(View view) {
         Log.d(TAG, "initData: preparing data.");
-        mExploreEventListFragmentViewModel = ViewModelProviders.of(this).get(ExploreEventListFragmentViewModel.class);
+        mExploreEventListFragmentViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
         mExploreEventListFragmentViewModel.init();
-        mExploreEventListFragmentViewModel.getEvents().observe(this, new Observer<List<Event>>() {
+        mExploreEventListFragmentViewModel.getEvents().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
             @Override
             public void onChanged(List<Event> events) {
                 madapter.notifyDataSetChanged();

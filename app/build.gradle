@@ -26,8 +26,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-
-    implementation 'com.google.firebase:firebase-auth:16.0.5'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'com.google.firebase:firebase-auth:19.3.0'
 //    implementation 'com.google.android.gms:play-services-maps:16.1.0'
 
 //    implementation 'com.google.android.libraries.places:places:2.2.0'
@@ -38,7 +38,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
-    implementation 'com.google.android.material:material:1.0.0-alpha1'
+    implementation 'com.google.android.material:material:1.2.0-alpha05'
 
     //recycler view
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
@@ -46,7 +46,10 @@ dependencies {
     //card view
     implementation "androidx.cardview:cardview:1.0.0"
     //live data
-    def version= '1.1.1'
-    implementation "android.arch.lifecycle:extensions:$version"
-    annotationProcessor "android.arch.lifecycle:compiler:$version"
+//    def version= '1.1.1'
+//    implementation "android.arch.lifecycle:extensions:$version"
+//    annotationProcessor "android.arch.lifecycle:compiler:$version"
+
+
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 }

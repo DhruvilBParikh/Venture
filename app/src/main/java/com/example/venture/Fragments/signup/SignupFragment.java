@@ -3,7 +3,9 @@ package com.example.venture.Fragments.signup;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,9 +13,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.venture.MainActivity;
 import com.example.venture.R;
+import com.example.venture.models.User;
+import com.example.venture.viewmodels.explore.UsersViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +39,8 @@ public class SignupFragment extends Fragment {
     private View view;
     private Button signupButton;
     private EditText nameText, emailText, passwordText;
+    private FirebaseAuth mAuth;
+    private UsersViewModel usersViewModel;
 
     public SignupFragment() {
         // Required empty public constructor
@@ -46,34 +58,39 @@ public class SignupFragment extends Fragment {
         nameText = view.findViewById(R.id.nameText);
         emailText = view.findViewById(R.id.emailText);
         passwordText = view.findViewById(R.id.passwordText);
+        mAuth = FirebaseAuth.getInstance();
+        usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                boolean name = nameCheck();
-                boolean email = emailCheck();
-                boolean password = passwordCheck();
+                boolean nameCheck = nameCheck();
+                boolean emailCheck = emailCheck();
+                boolean passwordCheck = passwordCheck();
 
-                if(name && email && password) {
+                if(nameCheck && emailCheck && passwordCheck) {
                     // handle sign up code
+                    String email = emailText.getText().toString();
+                    String password = passwordText.getText().toString();
+                    String name = nameText.getText().toString();
+                    createAccount(name, email, password);
 
-                    ((MainActivity) getActivity()).logsIn(getTag());
 
                 } else {
-                    if(!name) {
+                    if(!nameCheck) {
                         Log.d(TAG, "onClick: invalid name message");
                         view.findViewById(R.id.invalidName).setVisibility(View.VISIBLE);
                     } else {
                         view.findViewById(R.id.invalidName).setVisibility(View.GONE);
                     }
-                    if(!email) {
+                    if(!emailCheck) {
                         Log.d(TAG, "onClick: invalid email message");
                         view.findViewById(R.id.invalidEmail).setVisibility(View.VISIBLE);
                     } else {
                         view.findViewById(R.id.invalidEmail).setVisibility(View.GONE);
                     }
-                    if(!password) {
+                    if(!passwordCheck) {
                         Log.d(TAG, "onClick: invalid password message");
                         view.findViewById(R.id.invalidPassword).setVisibility(View.VISIBLE);
                     } else {
@@ -84,6 +101,48 @@ public class SignupFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser!=null){
+            Log.d(TAG, "onStart: successfully signed in");
+            Toast.makeText(getActivity().getApplicationContext(), "Successfully Signed In with "+ currentUser.getEmail(), Toast.LENGTH_LONG).show();
+        }
+//        updateUI(currentUser);
+    }
+
+    public void createAccount(final String name, final String email, String password) {
+        Log.d(TAG, "createAccount: Creating an account:email:"+email+":pass:"+ password);
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(TAG, "createUserWithEmail:success");
+                                FirebaseUser currentUser = mAuth.getCurrentUser();
+                                User user = new User();
+                                user.setId(currentUser.getUid());
+                                user.setEmail(email);
+                                user.setName(name);
+                                usersViewModel.addUser(user);
+
+                                ((MainActivity) getActivity()).logsIn(getTag(), currentUser);
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                Toast.makeText(getActivity().getApplicationContext(), task.getException().getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+
+                            }
+
+
+                        }
+                    });
     }
 
     public boolean nameCheck() {
@@ -104,8 +163,7 @@ public class SignupFragment extends Fragment {
         return true;
     }
 
-    public boolean emailCheck()
-    {
+    public boolean emailCheck(){
         String regExpn =
                 "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
                         +"((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"

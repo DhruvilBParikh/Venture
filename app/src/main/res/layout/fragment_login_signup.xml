@@ -45,6 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:width="1in"
+            android:layout_marginRight="10dp"
             android:backgroundTint="@color/colorPrimary"
             android:text="@string/login"
             android:textColor="@color/white" />

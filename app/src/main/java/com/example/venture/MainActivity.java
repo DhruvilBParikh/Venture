@@ -18,6 +18,9 @@ import com.example.venture.Fragments.login.LoginFragment;
 import com.example.venture.Fragments.signup.SignupFragment;
 import com.example.venture.Fragments.profile.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private Fragment historyFragment;
     private Fragment profileFragment;
     private Fragment loginSignupFragment;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
 
     @Override
@@ -44,15 +49,24 @@ public class MainActivity extends AppCompatActivity {
         profileFragment = new ProfileFragment();
         loginSignupFragment = new LoginSignupFragment();
 
+        mAuth =FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        isLoggedIn = checkSession();
+        Log.d(TAG, "onCreate: Loggedin "+isLoggedIn);
         setContentView(R.layout.activity_main);
-
-//        isLoggedIn = checkSession();
-        isLoggedIn = false;
 
         bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         bottomNavigation.setSelectedItemId(R.id.item_explore);
 //        openFragment("EXPLORE");
+    }
+
+    public FirebaseUser getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(FirebaseUser user) {
+        currentUser = user;
     }
 
     public void openFragment(String tag) {
@@ -104,18 +118,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean checkSession() {
-        Log.d(TAG, "isLoggedIn: checking user session");
+        Log.d(TAG, "isLoggedIn: checking user session "+ currentUser);
 
-//        check session code
-
-        return false;
+        if(currentUser!=null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void logsIn(String tag) {
+    public void logsIn(String tag, FirebaseUser user) {
         Log.d(TAG, "logsIn: user logs in");
 
-//        handle login code
-
+        currentUser = user;
         isLoggedIn = true;
 
         openFragment(tag);
@@ -125,7 +140,9 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "logsOut: user logged out");
 
 //        handle log out code
+        mAuth.signOut();
         isLoggedIn = false;
+
         bottomNavigation.setSelectedItemId(R.id.item_explore);
 //        openFragment("EXPLORE");
 
