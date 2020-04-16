@@ -1,25 +1,41 @@
 package com.example.venture.models;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class Event {
 
     private String id;
     private String image;
     private String title;
     private String location;
+    private LatLng latLng;
     private String date;
     private String time;
     private String desc;
     private String organizer;
 
-    public Event(String id, String image, String title, String location, String date, String time, String desc, String organizer) {
-        this.id = id;
-        this.image = image;
-        this.title = title;
-        this.location = location;
-        this.date = date;
-        this.time = time;
-        this.desc = desc;
-        this.organizer = organizer;
+//    public Event(String id, String image, String title, String location, LatLng latLng, String date, String time, String desc, String organizer) {
+//        this.id = id;
+//        this.image = image;
+//        this.title = title;
+//        this.location = location;
+//        this.latLng = latLng;
+//        this.date = date;
+//        this.time = time;
+//        this.desc = desc;
+//        this.organizer = organizer;
+//    }
+    public Event() {
+        this.id = null;
+        this.image = null;
+        this.title = null;
+        this.location = null;
+        this.latLng = null;
+        this.date = null;
+        this.time = null;
+        this.desc = null;
+        this.organizer = null;
+
     }
 
     public String getId() {
@@ -37,6 +53,10 @@ public class Event {
 
     public String getLocation() {
         return location;
+    }
+
+    public LatLng getLatLng() {
+        return latLng;
     }
 
     public String getDate() {
@@ -69,6 +89,10 @@ public class Event {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public void setLatLng(LatLng latLng) {
+        this.latLng = latLng;
     }
 
     public void setDate(String date) {
