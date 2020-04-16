@@ -32,6 +32,10 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         this.mContext = mContext;
     }
 
+    public void setmEvents(List<Event> mEvents) {
+        this.mEvents = mEvents;
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -45,7 +49,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     public void onBindViewHolder(ViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder: called.");
 
-        Log.d(TAG, mEvents.get(position).getImage());
+//        Log.d(TAG, mEvents.get(position).getImage());
 
         holder.event_image.setImageResource(R.drawable.sf_trail);
 

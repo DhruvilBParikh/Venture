@@ -10,23 +10,50 @@ public class Event {
     private String location;
     private double latitude;
     private double longitude;
+    private LatLng latLng;
     private String date;
     private String time;
     private String details;
     private String organizer;
 
-    public Event(){
+    //Dhruvil's Change
+    // public Event(){
 
-    }
-    public Event(String id, String image, String title, String location, String date, String time, String details, String organizer) {
-        this.id = id;
-        this.image = image;
-        this.title = title;
-        this.location = location;
-        this.date = date;
-        this.time = time;
-        this.details = details;
-        this.organizer = organizer;
+    // }
+    // public Event(String id, String image, String title, String location, String date, String time, String details, String organizer) {
+    //     this.id = id;
+    //     this.image = image;
+    //     this.title = title;
+    //     this.location = location;
+    //     this.date = date;
+    //     this.time = time;
+    //     this.details = details;
+    //     this.organizer = organizer;
+
+
+    //Devanshi's Change
+//    public Event(String id, String image, String title, String location, LatLng latLng, String date, String time, String desc, String organizer) {
+//        this.id = id;
+//        this.image = image;
+//        this.title = title;
+//        this.location = location;
+//        this.latLng = latLng;
+//        this.date = date;
+//        this.time = time;
+//        this.desc = desc;
+//        this.organizer = organizer;
+//    }
+    public Event() {
+        this.id = null;
+        this.image = null;
+        this.title = null;
+        this.location = null;
+        this.latLng = null;
+        this.date = null;
+        this.time = null;
+        this.desc = null;
+        this.organizer = null;
+
     }
 
     public double getLatitude() {
@@ -52,6 +79,10 @@ public class Event {
 
     public String getLocation() {
         return location;
+    }
+
+    public LatLng getLatLng() {
+        return latLng;
     }
 
     public String getDate() {
@@ -92,6 +123,8 @@ public class Event {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    public void setLatLng(LatLng latLng) {
+        this.latLng = latLng;
     }
 
     public void setDate(String date) {

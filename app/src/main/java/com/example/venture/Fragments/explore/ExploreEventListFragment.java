@@ -20,6 +20,8 @@ import com.example.venture.R;
 import com.example.venture.adapters.EventsRecyclerViewAdapter;
 import com.example.venture.models.Event;
 import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,7 @@ import java.util.List;
 public class ExploreEventListFragment extends Fragment {
 
     private static final String TAG = "ExploreEventListFragment";
+
 
     private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
 
@@ -90,31 +93,37 @@ public class ExploreEventListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_explore_event_list, container, false);
         mrecyclerView = view.findViewById(R.id.event_list_recyclerview);
         Log.d(TAG, "onCreateView: started.");
-        initData(view);
+        initData();
+        initRecyclerView();
         return view;
     }
 
     @SuppressLint("LongLogTag")
-    private void initData(View view) {
+    private void initData() {
+
         Log.d(TAG, "initData: preparing data.");
-        mExploreEventListFragmentViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
+//        mExploreEventListFragmentViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
+        mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
         mExploreEventListFragmentViewModel.init();
         mExploreEventListFragmentViewModel.getEvents().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
             @Override
             public void onChanged(List<Event> events) {
+                Log.d("----observer--", events.toString());
+                madapter.setmEvents(events);
                 madapter.notifyDataSetChanged();
 
             }
         });
 
-        initRecyclerView(view);
+
     }
 
     @SuppressLint("LongLogTag")
-    private void initRecyclerView(View view) {
+    private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
 
         madapter = new EventsRecyclerViewAdapter(getContext(), mExploreEventListFragmentViewModel.getEvents().getValue());
