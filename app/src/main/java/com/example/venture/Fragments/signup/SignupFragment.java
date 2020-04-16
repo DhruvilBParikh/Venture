@@ -65,6 +65,7 @@ public class SignupFragment extends Fragment {
 
         //mvvm viewmodel
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        //usersViewModel = new ViewModelProvider(requireActivity()).get(UsersViewModel.class);
 
         //Signup onClick
         signupButton.setOnClickListener(new View.OnClickListener() {
