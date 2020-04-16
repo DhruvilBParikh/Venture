@@ -63,7 +63,7 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
         toastNotification(getResources().getString(R.string.geolocateSuccess));
         getDeviceLocation();
-        autoSearch();
+//        autoSearch();
     }
 
     private void getLocationPermission(){
@@ -119,6 +119,7 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback {
                         if(task.isSuccessful()){
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
+                            Log.d(TAG, "onComplete: currentLocation" +currentLocation);
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                     DEFAULT_ZOOM,
                                     "My Location");
@@ -134,36 +135,36 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void autoSearch() {
-        String apiKey = "AIzaSyCA0NaAI0q_DC1oagzC8hDnp7r1bv7j8JE";
-        if (!Places.isInitialized()) {
-            Places.initialize(getContext(), apiKey);
-        }
-
-        // Initialize the AutocompleteSupportFragment.
-        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-
-        // Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
-
-        // Set up a PlaceSelectionListener to handle the response.
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                Log.d(TAG, "onPlaceSelected: " + place.toString());
-                if (!place.getName().isEmpty()) {
-                    LatLng latLng = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
-                    addMarker(latLng, place.getName());
-                    moveCamera(latLng, DEFAULT_ZOOM,place.getName());
-                }
-            }
-            @Override
-            public void onError(Status status) {
-                Log.d(TAG, "onError: error occurred, status: " + status);
-            }
-        });
-    }
+//    private void autoSearch() {
+//        String apiKey = "AIzaSyCA0NaAI0q_DC1oagzC8hDnp7r1bv7j8JE";
+//        if (!Places.isInitialized()) {
+//            Places.initialize(getContext(), apiKey);
+//        }
+//
+//        // Initialize the AutocompleteSupportFragment.
+//        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+//                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+//
+//        // Specify the types of place data to return.
+//        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+//
+//        // Set up a PlaceSelectionListener to handle the response.
+//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(Place place) {
+//                Log.d(TAG, "onPlaceSelected: " + place.toString());
+//                if (!place.getName().isEmpty()) {
+//                    LatLng latLng = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
+//                    addMarker(latLng, place.getName());
+//                    moveCamera(latLng, DEFAULT_ZOOM,place.getName());
+//                }
+//            }
+//            @Override
+//            public void onError(Status status) {
+//                Log.d(TAG, "onError: error occurred, status: " + status);
+//            }
+//        });
+//    }
 
     public void initMap() {
         Log.d(TAG, "initMap: initializing map");

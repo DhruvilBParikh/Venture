@@ -10,7 +10,6 @@ public class User {
     private String bio;
     private LatLng lastLocation;
 
-
     public String getId() {
         return id;
     }

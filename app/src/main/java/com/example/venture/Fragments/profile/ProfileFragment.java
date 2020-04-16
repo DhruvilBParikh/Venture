@@ -1,6 +1,8 @@
 package com.example.venture.Fragments.profile;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,6 +11,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStore;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,9 +33,11 @@ import org.w3c.dom.Text;
  */
 public class ProfileFragment extends Fragment {
 
+    private static final String TAG = "ProfileFragment";
     private TextView userName;
     private TextView bioDescription;
     private UsersViewModel usersViewModel;
+    private SharedPreferences mPreferences;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -46,17 +51,13 @@ public class ProfileFragment extends Fragment {
         View view =inflater.inflate(R.layout.fragment_profile, container, false);
         userName = view.findViewById(R.id.userName);
         bioDescription = view.findViewById(R.id.bioDescription);
-        usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
-        usersViewModel.init();
-        String userId = ((MainActivity)getActivity()).getCurrentUser().getUid();
-        usersViewModel.getUser(userId).observe(getViewLifecycleOwner(), new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                userName.setText(user.getName());
-                if(user.getBio()!=null)
-                    bioDescription.setText(user.getBio());
-            }
-        });
+        mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        String name = mPreferences.getString("name", "");
+        String bio = mPreferences.getString("bio", "");
+        userName.setText(name);
+        if(bio!="")
+            bioDescription.setText(bio);
         setHasOptionsMenu(true);
         return view;
     }
@@ -82,6 +83,5 @@ public class ProfileFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 }

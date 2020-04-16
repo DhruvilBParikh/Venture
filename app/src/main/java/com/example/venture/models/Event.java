@@ -1,25 +1,40 @@
 package com.example.venture.models;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class Event {
 
     private String id;
     private String image;
     private String title;
     private String location;
+    private double latitude;
+    private double longitude;
     private String date;
     private String time;
-    private String desc;
+    private String details;
     private String organizer;
 
-    public Event(String id, String image, String title, String location, String date, String time, String desc, String organizer) {
+    public Event(){
+
+    }
+    public Event(String id, String image, String title, String location, String date, String time, String details, String organizer) {
         this.id = id;
         this.image = image;
         this.title = title;
         this.location = location;
         this.date = date;
         this.time = time;
-        this.desc = desc;
+        this.details = details;
         this.organizer = organizer;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     public String getId() {
@@ -47,8 +62,8 @@ public class Event {
         return time;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDetails() {
+        return details;
     }
 
     public String getOrganizer() {
@@ -71,6 +86,14 @@ public class Event {
         this.location = location;
     }
 
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
     public void setDate(String date) {
         this.date = date;
     }
@@ -79,8 +102,8 @@ public class Event {
         this.time = time;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
     public void setOrganizer(String organizer) {

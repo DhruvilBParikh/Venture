@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
@@ -41,11 +42,11 @@ public class LoginFragment extends Fragment {
     private TextView emailText, passwordText;
     private FirebaseAuth mAuth;
     private UsersViewModel usersViewModel;
+    User loggedInUser = new User();
 
     public LoginFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,9 +62,9 @@ public class LoginFragment extends Fragment {
         usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-
                 boolean emailCheck = emailCheck();
                 boolean passwordCheck = passwordCheck();
                 if(emailCheck && passwordCheck) {
@@ -101,7 +102,19 @@ public class LoginFragment extends Fragment {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success");
                     FirebaseUser currentUser = mAuth.getCurrentUser();
-                    ((MainActivity) getActivity()).logsIn(getTag(), currentUser);
+                    String userId = currentUser.getUid();
+
+                    usersViewModel.getUser(userId).observe(getViewLifecycleOwner(), new Observer<User>() {
+                        @Override
+                        public void onChanged(User user) {
+                            loggedInUser = user;
+                            Log.d(TAG, "onComplete: Log in user::::::::::::::::"+ loggedInUser.getName());
+                            Log.d(TAG, "onComplete: Log in user::::::::::::::::"+ loggedInUser.getId());
+                            Log.d(TAG, "onComplete: Log in user::::::::::::::::"+ loggedInUser.getName());
+                            ((MainActivity) getActivity()).logsIn(getTag(), loggedInUser);
+                        }
+                    });
+
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.getException());

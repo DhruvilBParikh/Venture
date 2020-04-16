@@ -4,14 +4,21 @@ package com.example.venture.repositories;
  * Singleton pattern
  */
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.venture.models.Event;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class EventsRepository {
+
+    private static final String TAG = "EventsRepository";
 
     private static EventsRepository instance;
     private ArrayList<Event> dataSet = new ArrayList<>();
@@ -31,6 +38,11 @@ public class EventsRepository {
 
     }
 
+    public void addEvent(Event event) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
+        Log.d(TAG, "addEvent: "+event.getTitle());
+        reference.push().setValue(event);
+    }
 
     private void setEvents() {
         dataSet.add(

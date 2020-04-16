@@ -26,4 +26,8 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
     public LiveData<List<Event>> getEvents() {
         return mEvents;
     }
+
+    public void addEvent(Event event) {
+        EventsRepository.getInstance().addEvent(event);
+    }
 }
