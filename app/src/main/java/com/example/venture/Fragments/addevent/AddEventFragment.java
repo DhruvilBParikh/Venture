@@ -46,6 +46,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,7 +79,9 @@ public class AddEventFragment extends Fragment {
 
     private SharedPreferences mPreferences;
 
+    //viewmodels
     private ExploreEventListFragmentViewModel mEventViewModel;
+    private UsersViewModel mUserViewModel;
 
     public AddEventFragment() {
         // Required empty public constructor
@@ -164,10 +167,11 @@ public class AddEventFragment extends Fragment {
         autoSearch();
 
         mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-//        String userId = mPreferences.getString("userId", "");
+        final String userId = mPreferences.getString("userId", "");
         final String organizer = mPreferences.getString("name", "");
 
         mEventViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
+        mUserViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 
         mAddEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,11 +188,19 @@ public class AddEventFragment extends Fragment {
                 event.setDate(mDate.getText().toString());
                 event.setTime(mTime.getText().toString());
                 event.setOrganizer(organizer);
-                mEventViewModel.addEvent(event);
+                String eventId = mEventViewModel.addEvent(event);
+
+                //Adding in Cretaed and joined events in User Node
+                HashMap<String, String> eventMap = new HashMap<String, String>();
+                eventMap.put("title", mTitle.getText().toString());
+                eventMap.put("location", location);
+                eventMap.put("image", "sf_trail.jpg");
+
+                mUserViewModel.addCreatedEvent(eventMap, eventId, userId);
                 ((MainActivity)getActivity()).openFragment("EXPLORE");
             }
         });
-        
+
         return view;
     }
 

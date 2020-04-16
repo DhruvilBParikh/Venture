@@ -8,6 +8,7 @@ import com.example.venture.models.User;
 import com.example.venture.repositories.UsersRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UsersViewModel extends ViewModel {
 
@@ -28,5 +29,9 @@ public class UsersViewModel extends ViewModel {
 
     public void addUser(User user) {
         UsersRepository.getInstance().addUser(user);
+    }
+
+    public void addCreatedEvent(HashMap<String, String> eventMap, String eventId, String userId) {
+        UsersRepository.getInstance().addCreatedEvent(eventMap, eventId, userId);
     }
 }

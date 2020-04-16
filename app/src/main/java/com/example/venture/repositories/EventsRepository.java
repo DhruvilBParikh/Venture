@@ -38,10 +38,13 @@ public class EventsRepository {
 
     }
 
-    public void addEvent(Event event) {
+    public String addEvent(Event event) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
         Log.d(TAG, "addEvent: "+event.getTitle());
         reference.push().setValue(event);
+        String eventId = reference.push().getKey();
+        Log.d(TAG, "addEvent: event id is::::" + eventId);
+        return eventId;
     }
 
     private void setEvents() {

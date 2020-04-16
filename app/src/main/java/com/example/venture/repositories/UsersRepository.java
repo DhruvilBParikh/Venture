@@ -125,5 +125,11 @@ public class UsersRepository {
 
     }
 
+    public void addCreatedEvent(HashMap<String, String> eventMap, String eventId, String userId) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users");
+        reference.child(userId).child("createdEvents").child(eventId).setValue(eventMap);
+        reference.child(userId).child("joinedEvents").child(eventId).setValue(eventMap);
+    }
+
 
 }
