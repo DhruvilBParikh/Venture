@@ -10,16 +10,17 @@ public class Event {
     private String location;
     private double latitude;
     private double longitude;
-    private LatLng latLng;
+//    private LatLng latLng;
     private String date;
     private String time;
     private String details;
     private String organizer;
 
+//    private String desc;
     //Dhruvil's Change
-    // public Event(){
+     public Event(){
 
-    // }
+     }
     // public Event(String id, String image, String title, String location, String date, String time, String details, String organizer) {
     //     this.id = id;
     //     this.image = image;
@@ -43,18 +44,18 @@ public class Event {
 //        this.desc = desc;
 //        this.organizer = organizer;
 //    }
-    public Event() {
-        this.id = null;
-        this.image = null;
-        this.title = null;
-        this.location = null;
-        this.latLng = null;
-        this.date = null;
-        this.time = null;
-        this.desc = null;
-        this.organizer = null;
-
-    }
+//    public Event() {
+//        this.id = null;
+//        this.image = null;
+//        this.title = null;
+//        this.location = null;
+//        this.latLng = null;
+//        this.date = null;
+//        this.time = null;
+//        this.desc = null;
+//        this.organizer = null;
+//
+//    }
 
     public double getLatitude() {
         return latitude;
@@ -81,9 +82,9 @@ public class Event {
         return location;
     }
 
-    public LatLng getLatLng() {
-        return latLng;
-    }
+//    public LatLng getLatLng() {
+//        return latLng;
+//    }
 
     public String getDate() {
         return date;
@@ -123,9 +124,11 @@ public class Event {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
-    public void setLatLng(LatLng latLng) {
-        this.latLng = latLng;
     }
+
+//    public void setLatLng(LatLng latLng) {
+//        this.latLng = latLng;
+//    }
 
     public void setDate(String date) {
         this.date = date;

@@ -61,7 +61,7 @@ public class EventsRepository {
     }
 
     public String addEvent(Event event) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("trialevents");
         Log.d(TAG, "addEvent: "+event.getTitle());
         reference.push().setValue(event);
         String eventId = reference.push().getKey();
