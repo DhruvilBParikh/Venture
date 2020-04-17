@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,38 +18,42 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.venture.R;
-import com.google.android.gms.common.api.Status;
+import com.example.venture.models.Event;
+import com.example.venture.viewmodels.explore.ExploreMapFragmentViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-
-import java.util.Arrays;
+import java.util.List;
 
 
-public class ExploreMapFragment extends Fragment implements OnMapReadyCallback {
+public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     private static final String TAG = "ExploreMapFragment";
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private static final float DEFAULT_ZOOM = 15f;
+    private static final float DEFAULT_ZOOM = 10f;
 
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
 
+    private static final String CURRENT_LOCATION = "My Location";
+    private double curLatitude = 0.0;
+    private double curLongitude = 0.0;
+
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Boolean mLocationPermissionsGranted = false;
+
+    private ExploreMapFragmentViewModel exploreMapFragmentViewModel;
 
     @Nullable
     @Override
@@ -63,6 +68,8 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
         toastNotification(getResources().getString(R.string.geolocateSuccess));
         getDeviceLocation();
+        initData();
+        mMap.setOnInfoWindowClickListener(this);
 //        autoSearch();
     }
 
@@ -119,10 +126,11 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback {
                         if(task.isSuccessful()){
                             Log.d(TAG, "onComplete: found location!");
                             Location currentLocation = (Location) task.getResult();
-                            Log.d(TAG, "onComplete: currentLocation" +currentLocation);
+                            Log.d(TAG, "onComplete: currentLocation: " +currentLocation);
+                            curLatitude = currentLocation.getLatitude();
+                            curLongitude = currentLocation.getLongitude();
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
-                                    DEFAULT_ZOOM,
-                                    "My Location");
+                                    DEFAULT_ZOOM);
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
                             toastNotification(getResources().getString(R.string.geolocateError));
@@ -135,64 +143,71 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-//    private void autoSearch() {
-//        String apiKey = "AIzaSyCA0NaAI0q_DC1oagzC8hDnp7r1bv7j8JE";
-//        if (!Places.isInitialized()) {
-//            Places.initialize(getContext(), apiKey);
-//        }
-//
-//        // Initialize the AutocompleteSupportFragment.
-//        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-//                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-//
-//        // Specify the types of place data to return.
-//        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
-//
-//        // Set up a PlaceSelectionListener to handle the response.
-//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//                Log.d(TAG, "onPlaceSelected: " + place.toString());
-//                if (!place.getName().isEmpty()) {
-//                    LatLng latLng = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
-//                    addMarker(latLng, place.getName());
-//                    moveCamera(latLng, DEFAULT_ZOOM,place.getName());
-//                }
-//            }
-//            @Override
-//            public void onError(Status status) {
-//                Log.d(TAG, "onError: error occurred, status: " + status);
-//            }
-//        });
-//    }
-
     public void initMap() {
         Log.d(TAG, "initMap: initializing map");
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
-    private void moveCamera(LatLng latLng, float zoom, String title){
-        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    public void initData() {
+        exploreMapFragmentViewModel = ExploreMapFragmentViewModel.getInstance();
+        exploreMapFragmentViewModel.init();
+        exploreMapFragmentViewModel.getEvents().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
+            @Override
+            public void onChanged(List<Event> events) {
+                Log.d(TAG, "onChanged: " + events.toString());
+                setMarkers(events);
+            }
+        });
 
-        if(!title.equals("My Location")){
-            MarkerOptions options = new MarkerOptions()
-                    .position(latLng)
-                    .title(title);
-            mMap.addMarker(options);
+    }
+
+    public void setMarkers(List<Event> events){
+        mMap.clear();
+        // add current location marker
+        addEventMarker("", new LatLng(curLatitude, curLongitude), CURRENT_LOCATION, "");
+
+        // add events markers
+        for(Event e: events) {
+            Log.d(TAG, "setMarkers: "+ e.getId() + ", " + e.getTitle() +", "+ e.getLocation() +", "+ e.getLatitude()+", "+e.getLongitude());
+            addEventMarker(e.getId(), new LatLng(e.getLatitude(), e.getLongitude()), e.getTitle(), e.getLocation());
         }
     }
 
-    public void addMarker(LatLng latLng, String title) {
+    private void moveCamera(LatLng latLng, float zoom){
         mMap.clear();
-        mMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title(title));
+        Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    }
+
+    public void addEventMarker(String id, LatLng latLng, String title, String location) {
+        Log.d(TAG, "addMarker: " + title);
+        if(title.equals(CURRENT_LOCATION)) {
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                    .title(title);
+            mMap.addMarker(options);
+        }
+        else {
+            MarkerOptions options = new MarkerOptions()
+                    .position(latLng)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                    .title(title)
+                    .snippet(location);
+            Marker marker = mMap.addMarker(options);
+            marker.setTag(id);
+        }
     }
 
     public void toastNotification(String message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        if(marker.getTag()!=null) {
+            Log.d(TAG, "onInfoWindowClick: open event with id: " + marker.getTag());
+        }
+    }
 }

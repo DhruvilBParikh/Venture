@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.venture.models.Event;
 import com.example.venture.models.User;
 import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
+import com.example.venture.viewmodels.explore.ExploreMapFragmentViewModel;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -40,6 +41,7 @@ public class EventsRepository {
     private ArrayList<Event> dataSet = new ArrayList<>();
     private static DatabaseReference mDatabase;
     private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
+    private ExploreMapFragmentViewModel mExloreMapFragmentViewModel;
 
 
     public static EventsRepository getInstance() {
@@ -61,7 +63,7 @@ public class EventsRepository {
     }
 
     public String addEvent(Event event) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("trialevents");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
         Log.d(TAG, "addEvent: "+event.getTitle());
         reference.push().setValue(event);
         String eventId = reference.push().getKey();
@@ -75,8 +77,9 @@ public class EventsRepository {
 
     private void loadEvents() {
 
-        DatabaseReference mreference = mDatabase.child("trialevents");
+        DatabaseReference mreference = mDatabase.child("events");
         mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
+        mExloreMapFragmentViewModel = ExploreMapFragmentViewModel.getInstance();
 
         mreference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -85,17 +88,26 @@ public class EventsRepository {
                 addList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    Log.d(TAG, dataSnapshot.getKey());
-                    Log.d(TAG, dataSnapshot.child("location").toString());
-
                     final Event newEvent = new Event();
+
+                    Log.d(TAG, "onDataChange: " + snapshot.getKey());
+                    Log.d(TAG, "onDataChange: " + snapshot.child("title").getValue());
+                    Log.d(TAG, "onDataChange: " + snapshot.child("location").getValue());
+                    Log.d(TAG, "onDataChange: " + snapshot.child("latitude").getValue());
+                    Log.d(TAG, "onDataChange: " + snapshot.child("longitude").getValue());
+
+                    newEvent.setId(snapshot.getKey());
                     newEvent.setTitle(snapshot.child("title").getValue().toString());
                     newEvent.setLocation(snapshot.child("location").getValue().toString());
+                    newEvent.setLatitude(Double.parseDouble(snapshot.child("latitude").getValue().toString()));
+                    newEvent.setLongitude(Double.parseDouble(snapshot.child("longitude").getValue().toString()));
+
                     addList.add(newEvent);
 
                 }
                 Log.d("-------------------", addList.toString());
                 mExploreEventListFragmentViewModel.addEvents(addList);
+                mExloreMapFragmentViewModel.addEvents(addList);
             }
 
             @Override
