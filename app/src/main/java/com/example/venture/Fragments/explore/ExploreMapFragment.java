@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.venture.MainActivity;
 import com.example.venture.R;
 import com.example.venture.models.Event;
 import com.example.venture.viewmodels.explore.ExploreMapFragmentViewModel;
@@ -70,7 +71,6 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
         getDeviceLocation();
         initData();
         mMap.setOnInfoWindowClickListener(this);
-//        autoSearch();
     }
 
     private void getLocationPermission(){
@@ -131,6 +131,7 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
                             curLongitude = currentLocation.getLongitude();
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                     DEFAULT_ZOOM);
+                            addEventMarker("", new LatLng(curLatitude, curLongitude), CURRENT_LOCATION, "");
                         }else{
                             Log.d(TAG, "onComplete: current location is null");
                             toastNotification(getResources().getString(R.string.geolocateError));
@@ -150,23 +151,23 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     public void initData() {
+        Log.d(TAG, "initData: initializing map data");
         exploreMapFragmentViewModel = ExploreMapFragmentViewModel.getInstance();
         exploreMapFragmentViewModel.init();
         exploreMapFragmentViewModel.getEvents().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
             @Override
             public void onChanged(List<Event> events) {
                 Log.d(TAG, "onChanged: " + events.toString());
+                mMap.clear();
                 setMarkers(events);
             }
         });
-
     }
 
     public void setMarkers(List<Event> events){
-        mMap.clear();
         // add current location marker
-        addEventMarker("", new LatLng(curLatitude, curLongitude), CURRENT_LOCATION, "");
-
+        if(curLatitude!=0.0 && curLongitude!=0.0)
+            addEventMarker("", new LatLng(curLatitude, curLongitude), CURRENT_LOCATION, "");
         // add events markers
         for(Event e: events) {
             Log.d(TAG, "setMarkers: "+ e.getId() + ", " + e.getTitle() +", "+ e.getLocation() +", "+ e.getLatitude()+", "+e.getLongitude());
@@ -175,7 +176,6 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     private void moveCamera(LatLng latLng, float zoom){
-        mMap.clear();
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
@@ -208,6 +208,7 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
     public void onInfoWindowClick(Marker marker) {
         if(marker.getTag()!=null) {
             Log.d(TAG, "onInfoWindowClick: open event with id: " + marker.getTag());
+            ((MainActivity)getActivity()).openEventFragment(marker.getTag().toString(), getTag());
         }
     }
 }
