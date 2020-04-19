@@ -23,4 +23,8 @@
     <string name="loginSubtitle">Welcome back.\nLog in and let\'s get going.</string>
     <string name="title_activity_maps_trial">Map</string>
 
+    <!-- ExploreMapFragment -->
+    <string name="geolocateError">Unable to get current location</string>
+    <string name="geolocateSuccess">Location enabled</string>
+    <string name="permissionReq">Please grant permission to use your location</string>
 </resources>

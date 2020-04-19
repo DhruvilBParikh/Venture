@@ -20,10 +20,16 @@ import com.example.venture.R;
 import com.example.venture.adapters.EventsRecyclerViewAdapter;
 import com.example.venture.models.Event;
 import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -38,6 +44,7 @@ import java.util.List;
 public class ExploreEventListFragment extends Fragment {
 
     private static final String TAG = "ExploreEventListFragment";
+    private String eventType = "allEvents";
 
 
     private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
@@ -99,6 +106,7 @@ public class ExploreEventListFragment extends Fragment {
         Log.d(TAG, "onCreateView: started.");
         initData();
         initRecyclerView();
+        autoSearch();
         return view;
     }
 
@@ -106,30 +114,69 @@ public class ExploreEventListFragment extends Fragment {
     private void initData() {
 
         Log.d(TAG, "initData: preparing data.");
-//        mExploreEventListFragmentViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
+//        mExploreEventListFragmentViewModel = new ViewModelProvider(getActivity()).get(ExploreEventListFragmentViewModel.class);
         mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
-        mExploreEventListFragmentViewModel.init();
+        mExploreEventListFragmentViewModel.init(eventType, "", 0,0);
         mExploreEventListFragmentViewModel.getEvents().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
             @Override
             public void onChanged(List<Event> events) {
                 Log.d("----observer--", events.toString());
                 madapter.setmEvents(events);
                 madapter.notifyDataSetChanged();
-
             }
         });
-
-
     }
 
     @SuppressLint("LongLogTag")
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
-
         madapter = new EventsRecyclerViewAdapter(getContext(), mExploreEventListFragmentViewModel.getEvents().getValue());
         mrecyclerView.setAdapter(madapter);
         mrecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
+    private void autoSearch() {
+
+        //AUTOCOMPLETE
+        String apiKey = getString(R.string.google_maps_key);
+        if (!Places.isInitialized()) {
+            Places.initialize(getContext(), apiKey);
+        }
+
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG));
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.d("Place", place.getName());
+                System.out.println(place.toString());
+                if (!place.getName().isEmpty()) {
+                    double latitude = place.getLatLng().latitude;
+                    double longitude = place.getLatLng().longitude;
+                    String location = place.getName();
+                    eventType="searchEvents";
+                    mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
+                    mExploreEventListFragmentViewModel.init(eventType, location, latitude, longitude);
+                }
+            }
+
+
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i("error", "An error occurred: " + status);
+            }
+        });
+
+    }
 
 }

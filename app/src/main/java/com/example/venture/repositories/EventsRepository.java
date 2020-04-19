@@ -39,6 +39,7 @@ public class EventsRepository {
     private ArrayList<Event> dataSet = new ArrayList<>();
     private static DatabaseReference mDatabase;
     private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
+    private DatabaseReference mreference;
 
 
     public static EventsRepository getInstance() {
@@ -49,10 +50,20 @@ public class EventsRepository {
         return instance;
     }
 
-    public MutableLiveData<List<Event>> getEvents() {
+    public MutableLiveData<List<Event>> getEvents(String eventType, String location, double latitude, double longitude) {
+        mreference = mDatabase.child("trialevents");
+        mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
 
-        if (dataSet.size() == 0)
-            loadEvents();
+        switch (eventType){
+            case "allEvents": loadAllEvents();
+                                break;
+            case "searchEvents": Log.d("inside switch case", eventType);
+                loadSearchEvents(location, latitude, longitude);
+                                break;
+
+            default: loadAllEvents();
+        }
+
         MutableLiveData<List<Event>> data = new MutableLiveData<>();
         data.setValue(dataSet);
         return data;
@@ -64,10 +75,7 @@ public class EventsRepository {
     }
 
 
-    private void loadEvents() {
-
-        DatabaseReference mreference = mDatabase.child("trialevents");
-        mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
+    private void loadAllEvents() {
 
         mreference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -76,12 +84,16 @@ public class EventsRepository {
                 addList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    Log.d(TAG, dataSnapshot.getKey());
-                    Log.d(TAG, dataSnapshot.child("location").toString());
+                    Log.d(TAG, snapshot.getKey());
+                    Log.d(TAG, snapshot.child("location").toString());
+                    Log.d(TAG, String.valueOf(snapshot.child("longitude").getValue()));
+
 
                     final Event newEvent = new Event();
                     newEvent.setTitle(snapshot.child("title").getValue().toString());
                     newEvent.setLocation(snapshot.child("location").getValue().toString());
+                    newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
+                    newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
                     addList.add(newEvent);
 
                 }
@@ -94,5 +106,41 @@ public class EventsRepository {
 
             }
         });
+    }
+
+    private void loadSearchEvents(final String location, double latitude, double longitude) {
+
+        mreference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "loadSearchEvents");
+                addList.clear();
+                String searchLocation = location.toLowerCase();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String dbCity = snapshot.child("city").getValue().toString().toLowerCase();
+                    String dbState = snapshot.child("state").getValue().toString().toLowerCase();
+                    Log.d("To search", location);
+
+                    if(searchLocation.equals(dbCity) || searchLocation.equals(dbState))
+                    {
+                        final Event newEvent = new Event();
+                        newEvent.setTitle(snapshot.child("title").getValue().toString());
+                        newEvent.setLocation(snapshot.child("location").getValue().toString());
+                        newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
+                        newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
+                        addList.add(newEvent);
+                    }
+                }
+                Log.d("---------ans----------", addList.get(0).getTitle());
+                mExploreEventListFragmentViewModel.addEvents(addList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }

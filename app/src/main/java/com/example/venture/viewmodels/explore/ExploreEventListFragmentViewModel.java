@@ -17,6 +17,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class ExploreEventListFragmentViewModel extends ViewModel {
 
     private MutableLiveData<List<Event>> mEvents;
@@ -32,12 +34,12 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
     }
 
 
-    public void init() {
-        if (mEvents != null)
-            return;
-
+    public void init(String eventType, String location, double latitude, double longitude) {
+//        if (mEvents != null)
+//            return;
+        Log.d("inside INIT", eventType);
         mRepo = EventsRepository.getInstance();
-        mEvents = mRepo.getEvents();
+        mEvents = mRepo.getEvents(eventType, location, latitude, longitude);
 
     }
 
@@ -46,22 +48,24 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
     }
 
     public void addEvents(final List<Event> addevent) {
-        Log.d("---currentEvent1: ---", addevent.toString());
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-                Log.d("---currentEvent: ---", addevent.toString());
-                mEvents.postValue(addevent);
-                Log.d("---end: ---", "here");
-
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                return null;
-            }
-        }.execute();
+        
+        mEvents.setValue(addevent);
+//        Log.d("---currentEvent1: ---", addevent.toString());
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected void onPostExecute(Void aVoid) {
+//                super.onPostExecute(aVoid);
+//
+//                Log.d("---currentEvent: ---", addevent.get(0).getTitle());
+//                mEvents.postValue(addevent);
+//                Log.d("---end: ---", "here");
+//
+//            }
+//
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//                return null;
+//            }
+//        }.execute();
     }
 }

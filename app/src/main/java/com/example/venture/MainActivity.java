@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.venture.Fragments.addevent.AddEventFragment;
+import com.example.venture.Fragments.event.EventFragment;
 import com.example.venture.Fragments.explore.ExploreFragment;
 import com.example.venture.Fragments.history.HistoryFragment;
 import com.example.venture.Fragments.loginSignup.LoginSignupFragment;
@@ -114,6 +115,12 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "openLoginFragment: opening login fragment");
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, new SignupFragment(), tag);
+        transaction.commit();
+    }
+    public void openEventFragment(String eventId, String tag) {
+        Log.d(TAG, "openEventFragment: opening event with id: " + eventId);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, new EventFragment(eventId), tag);
         transaction.commit();
     }
 

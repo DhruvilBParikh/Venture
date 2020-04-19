@@ -8,7 +8,8 @@ public class Event {
     private String image;
     private String title;
     private String location;
-    private LatLng latLng;
+    private double latitude;
+    private double longitude;
     private String date;
     private String time;
     private String desc;
@@ -30,7 +31,8 @@ public class Event {
         this.image = null;
         this.title = null;
         this.location = null;
-        this.latLng = null;
+        this.latitude = 0;
+        this.longitude = 0;
         this.date = null;
         this.time = null;
         this.desc = null;
@@ -55,8 +57,12 @@ public class Event {
         return location;
     }
 
-    public LatLng getLatLng() {
-        return latLng;
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     public String getDate() {
@@ -91,8 +97,12 @@ public class Event {
         this.location = location;
     }
 
-    public void setLatLng(LatLng latLng) {
-        this.latLng = latLng;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public void setDate(String date) {
