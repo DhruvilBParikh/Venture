@@ -11,10 +11,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.venture.models.Event;
+import com.example.venture.repositories.CreatedEventsRepository;
 import com.example.venture.repositories.EventsRepository;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ExploreEventListFragmentViewModel extends ViewModel {
@@ -45,8 +47,8 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
         return mEvents;
     }
 
-    public String addEvent(Event event) {
-        return EventsRepository.getInstance().addEvent(event);
+    public String addEvent(Event event, String userId) {
+        return EventsRepository.getInstance().addEvent(event, userId);
     }
     
     public void addEvents(final List<Event> addevent) {
@@ -68,4 +70,9 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
             }
         }.execute();
     }
+
+    public void addCreatedEvent(HashMap<String, String> eventMap, String eventId, String userId) {
+        EventsRepository.getInstance().addCreatedEvent(eventMap, eventId, userId);
+    }
+
 }

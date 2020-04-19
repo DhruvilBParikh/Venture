@@ -24,6 +24,7 @@ import android.widget.TimePicker;
 import com.example.venture.MainActivity;
 import com.example.venture.R;
 import com.example.venture.models.Event;
+import com.example.venture.viewmodels.explore.CreatedEventViewModel;
 import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
 import com.example.venture.viewmodels.explore.UsersViewModel;
 import com.google.android.gms.common.api.Status;
@@ -82,6 +83,7 @@ public class AddEventFragment extends Fragment {
     //viewmodels
     private ExploreEventListFragmentViewModel mEventViewModel;
     private UsersViewModel mUserViewModel;
+//    private ExploreEventListFragmentViewModel mCreatedEventViewModel;
 
     public AddEventFragment() {
         // Required empty public constructor
@@ -99,71 +101,8 @@ public class AddEventFragment extends Fragment {
         mAddEvent = view.findViewById(R.id.buttonAddEvent);
         calendar = Calendar.getInstance();
 
-        mDate.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                int year = mYear;
-                int month = mMonth;
-                int day = mDayOfMonth;
-                DatePickerDialog dialog = new DatePickerDialog(
-                        getActivity(),
-                        android.R.style.Theme_DeviceDefault_Dialog_MinWidth,
-                        mDateSetListener,
-                        year, month, day
-                        );
-                dialog.getWindow();
-                dialog.show();
-            }
-        });
-
-        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                mMonth = month;
-                month = month + 1;
-                mDayOfMonth = dayOfMonth;
-                mYear = year;
-                String date = String.format("%02d", month)+"/"+String.format("%02d", dayOfMonth)+"/"+year;
-                mDate.setText(date);
-            }
-        };
-
-        mTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int hours = mHourOfDay;
-                int minutes = mMinute;
-                Log.d(TAG, "onClick: hours:"+hours);
-                Log.d(TAG, "onClick: minutes:"+minutes);
-                TimePickerDialog timePickerDialog = new TimePickerDialog(
-                        getActivity(),
-                        android.R.style.Theme_DeviceDefault_Dialog_MinWidth,
-                        mTimeSetListener,
-                        hours, minutes, false
-                );
-                timePickerDialog.getWindow();
-                timePickerDialog.show();
-            }
-        });
-        mTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                try {
-                    mHourOfDay = hourOfDay;
-                    mMinute = minute;
-                    String _24HourTime = hourOfDay + ":" + minute;
-                    Date _24HourDt = _24HourSDF.parse(_24HourTime);
-                    Log.d(TAG, "onTimeSet: " + _24HourTime);
-                    assert _24HourDt != null;
-                    Log.d(TAG, "onTimeSet: " + _12HourSDF.format(_24HourDt));
-                    String time = _12HourSDF.format(_24HourDt);
-                    mTime.setText(time);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
+        setDate();
+        setTime();
         autoSearch();
 
         mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -172,6 +111,7 @@ public class AddEventFragment extends Fragment {
 
         mEventViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
         mUserViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+//        mCreatedEventViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
 
         mAddEvent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,15 +128,18 @@ public class AddEventFragment extends Fragment {
                 event.setDate(mDate.getText().toString());
                 event.setTime(mTime.getText().toString());
                 event.setOrganizer(organizer);
-                String eventId = mEventViewModel.addEvent(event);
+                mEventViewModel.addEvent(event, userId);
 
-                //Adding in Cretaed and joined events in User Node
-                HashMap<String, String> eventMap = new HashMap<String, String>();
-                eventMap.put("title", mTitle.getText().toString());
-                eventMap.put("location", location);
-                eventMap.put("image", "sf_trail.jpg");
+//                //Adding in Created and joined events in User Node
+//                HashMap<String, String> eventMap = new HashMap<String, String>();
+//                eventMap.put("title", mTitle.getText().toString());
+//                eventMap.put("location", location);
+//                eventMap.put("date", mDate.getText().toString());
+//                eventMap.put("time", mTime.getText().toString());
+//                eventMap.put("image", "sf_trail.jpg");
+//
+//                mCreatedEventViewModel.addCreatedEvent(eventMap, eventId, userId);
 
-                mUserViewModel.addCreatedEvent(eventMap, eventId, userId);
                 ((MainActivity)getActivity()).openFragment("EXPLORE");
             }
         });
@@ -238,4 +181,73 @@ public class AddEventFragment extends Fragment {
 
     }
 
+    public void setDate() {
+        mDate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                int year = mYear;
+                int month = mMonth;
+                int day = mDayOfMonth;
+                DatePickerDialog dialog = new DatePickerDialog(
+                        getActivity(),
+                        android.R.style.Theme_DeviceDefault_Dialog_MinWidth,
+                        mDateSetListener,
+                        year, month, day
+                );
+                dialog.getWindow();
+                dialog.show();
+            }
+        });
+
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                mMonth = month;
+                month = month + 1;
+                mDayOfMonth = dayOfMonth;
+                mYear = year;
+                String date = String.format("%02d", month)+"/"+String.format("%02d", dayOfMonth)+"/"+year;
+                mDate.setText(date);
+            }
+        };
+    }
+
+    public void setTime() {
+        mTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hours = mHourOfDay;
+                int minutes = mMinute;
+                Log.d(TAG, "onClick: hours:"+hours);
+                Log.d(TAG, "onClick: minutes:"+minutes);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(
+                        getActivity(),
+                        android.R.style.Theme_DeviceDefault_Dialog_MinWidth,
+                        mTimeSetListener,
+                        hours, minutes, false
+                );
+                timePickerDialog.getWindow();
+                timePickerDialog.show();
+            }
+        });
+        mTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                try {
+                    mHourOfDay = hourOfDay;
+                    mMinute = minute;
+                    String _24HourTime = hourOfDay + ":" + minute;
+                    Date _24HourDt = _24HourSDF.parse(_24HourTime);
+                    Log.d(TAG, "onTimeSet: " + _24HourTime);
+                    assert _24HourDt != null;
+                    Log.d(TAG, "onTimeSet: " + _12HourSDF.format(_24HourDt));
+                    String time = _12HourSDF.format(_24HourDt);
+                    mTime.setText(time);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+    }
 }

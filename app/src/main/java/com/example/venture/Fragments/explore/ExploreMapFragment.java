@@ -67,8 +67,10 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+//        mMap.clear();
         toastNotification(getResources().getString(R.string.geolocateSuccess));
         getDeviceLocation();
+        Log.d(TAG, "onMapReady: before init data");
         initData();
         mMap.setOnInfoWindowClickListener(this);
     }
@@ -129,6 +131,9 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
                             Log.d(TAG, "onComplete: currentLocation: " +currentLocation);
                             curLatitude = currentLocation.getLatitude();
                             curLongitude = currentLocation.getLongitude();
+                            Log.d(TAG, "onComplete: current latitude"+curLatitude);
+                            Log.d(TAG, "onComplete: current longitude"+curLongitude);
+
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                     DEFAULT_ZOOM);
                             addEventMarker("", new LatLng(curLatitude, curLongitude), CURRENT_LOCATION, "");
@@ -151,9 +156,15 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     public void initData() {
+
         Log.d(TAG, "initData: initializing map data");
+
+        Log.d(TAG, "initData: ");
+
         exploreMapFragmentViewModel = ExploreMapFragmentViewModel.getInstance();
+        Log.d(TAG, "initData: After getting viewmodel instance");
         exploreMapFragmentViewModel.init();
+        Log.d(TAG, "initData: After init Viewmodel");
         exploreMapFragmentViewModel.getEvents().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
             @Override
             public void onChanged(List<Event> events) {
@@ -168,6 +179,11 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
         // add current location marker
         if(curLatitude!=0.0 && curLongitude!=0.0)
             addEventMarker("", new LatLng(curLatitude, curLongitude), CURRENT_LOCATION, "");
+        Log.d(TAG, "setMarkers: latitude"+curLatitude);
+        Log.d(TAG, "setMarkers: longitude"+curLongitude);
+        if(curLongitude!=0.0 && curLatitude!=0.0)
+            addEventMarker("", new LatLng(curLatitude, curLongitude), CURRENT_LOCATION, "");
+
         // add events markers
         for(Event e: events) {
             Log.d(TAG, "setMarkers: "+ e.getId() + ", " + e.getTitle() +", "+ e.getLocation() +", "+ e.getLatitude()+", "+e.getLongitude());
@@ -176,13 +192,19 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
     }
 
     private void moveCamera(LatLng latLng, float zoom){
+
+//        mMap.clear();
+
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
     public void addEventMarker(String id, LatLng latLng, String title, String location) {
         Log.d(TAG, "addMarker: " + title);
+
         if(title.equals(CURRENT_LOCATION)) {
+            Log.d(TAG, "addEventMarker: curlatlng"+latLng);
+
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))

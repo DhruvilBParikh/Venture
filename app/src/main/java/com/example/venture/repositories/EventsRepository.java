@@ -62,25 +62,38 @@ public class EventsRepository {
 
     }
 
-    public String addEvent(Event event) {
+    public String addEvent(Event event, String userId) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
         Log.d(TAG, "addEvent: "+event.getTitle());
         reference.push().setValue(event);
         String eventId = reference.push().getKey();
         Log.d(TAG, "addEvent: event id is::::" + eventId);
+
+        HashMap<String, String> eventMap = new HashMap<>();
+        eventMap.put("title", event.getTitle());
+        eventMap.put("location", event.getLocation());
+        eventMap.put("date", event.getDate());
+        eventMap.put("time", event.getTime());
+        eventMap.put("image", event.getImage());
+
+        addCreatedEvent(eventMap,eventId,userId);
         return eventId;
     }
+
+    public void addCreatedEvent(HashMap<String, String> eventMap, String eventId, String userId) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        reference.child("createdEvents").child(userId).child(eventId).setValue(eventMap);
+        reference.child("joinedEvents").child(userId).child(eventId).setValue(eventMap);
+    }
+
     public List<Event> getEventList() {
         return dataSet;
     }
 
-
     private void loadEvents() {
-
         DatabaseReference mreference = mDatabase.child("events");
         mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
         mExloreMapFragmentViewModel = ExploreMapFragmentViewModel.getInstance();
-
         mreference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -116,4 +129,17 @@ public class EventsRepository {
             }
         });
     }
+
+    public MutableLiveData<List<Event>> getCreatedEvents() {
+
+        if (dataSet.size() == 0)
+            loadEvents();
+        MutableLiveData<List<Event>> data = new MutableLiveData<>();
+        data.setValue(dataSet);
+        return data;
+
+    }
+
+
+
 }
