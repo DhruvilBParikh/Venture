@@ -28,4 +28,7 @@
     <string name="geolocateSuccess">Location enabled</string>
     <string name="permissionReq">Please grant permission to use your location</string>
 
+    <!-- Event Fragement -->
+    <string name="organizedBy">Organized By:</string>
+
 </resources>

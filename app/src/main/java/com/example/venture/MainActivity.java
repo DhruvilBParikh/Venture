@@ -1,6 +1,7 @@
 package com.example.venture;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -10,6 +11,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toolbar;
 
 import com.example.venture.Fragments.addevent.AddEventFragment;
 import com.example.venture.Fragments.event.EventFragment;
@@ -156,11 +159,20 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public void openEventFragment(String eventId, String tag) {
+    public void openEventFragment(String eventId) {
         Log.d(TAG, "openEventFragment: opening event with id: " + eventId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, new EventFragment(eventId), tag);
+        transaction.replace(R.id.container, new EventFragment(eventId));
+        transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void changeAppBar() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    public void hideBottomNavigationBar() {
+        bottomNavigation.setVisibility(View.GONE);
     }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
@@ -192,5 +204,12 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
             };
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        onBackPressed();
+        return true;
+    }
 
 }

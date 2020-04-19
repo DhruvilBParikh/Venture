@@ -67,7 +67,7 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        toastNotification(getResources().getString(R.string.geolocateSuccess));
+//        toastNotification(getResources().getString(R.string.geolocateSuccess));
         getDeviceLocation();
         initData();
         mMap.setOnInfoWindowClickListener(this);
@@ -208,7 +208,9 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
     public void onInfoWindowClick(Marker marker) {
         if(marker.getTag()!=null) {
             Log.d(TAG, "onInfoWindowClick: open event with id: " + marker.getTag());
-            ((MainActivity)getActivity()).openEventFragment(marker.getTag().toString(), getTag());
+            ((MainActivity)getActivity()).openEventFragment(marker.getTag().toString());
+            ((MainActivity)getActivity()).changeAppBar();
+            ((MainActivity)getActivity()).hideBottomNavigationBar();
         }
     }
 }
