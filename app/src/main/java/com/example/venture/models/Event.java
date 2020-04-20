@@ -15,6 +15,10 @@ public class Event {
     private String time;
     private String details;
     private String organizer;
+    private String organizerId;
+    private String city;
+    private String state;
+
 
 //    private String desc;
     //Dhruvil's Change
@@ -144,5 +148,29 @@ public class Event {
 
     public void setOrganizer(String organizer) {
         this.organizer = organizer;
+    }
+
+    public String getOrganizerId() {
+        return organizerId;
+    }
+
+    public void setOrganizerId(String organizerId) {
+        this.organizerId = organizerId;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

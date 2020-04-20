@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.venture.Fragments.explore.ExploreEventListFragment;
 import com.example.venture.models.Event;
 import com.example.venture.models.User;
 import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
@@ -35,14 +36,21 @@ public class EventsRepository {
 
     private String TAG = "-----EventsRepo------";
 
-    private List<Event> addList = new ArrayList<>();
     private static EventsRepository instance;
-    private ArrayList<Event> allEventsdataSet = new ArrayList<>();
-    private ArrayList<Event> dataSet = new ArrayList<>();
     private static DatabaseReference mDatabase;
-    private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
-    private ExploreMapFragmentViewModel mExloreMapFragmentViewModel;
 
+    //Lists
+    private List<Event> addList = new ArrayList<>();
+    private List<Event> createdList = new ArrayList<>();
+    private List<Event> joinedList = new ArrayList<>();
+
+    //MutableLiveData
+    private MutableLiveData<List<Event>> exploreData = new MutableLiveData<>();
+    private MutableLiveData<List<Event>> createdEventsData = new MutableLiveData<>();
+    private MutableLiveData<List<Event>> joinedEventsData = new MutableLiveData<>();
+
+//    private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
+//    private ExploreMapFragmentViewModel mExloreMapFragmentViewModel;
 
     public static EventsRepository getInstance() {
         if (instance == null) {
@@ -54,11 +62,11 @@ public class EventsRepository {
 
     public MutableLiveData<List<Event>> getEvents() {
 
-        if (dataSet.size() == 0)
+        if (addList.size() == 0)
             loadEvents();
-        MutableLiveData<List<Event>> data = new MutableLiveData<>();
-        data.setValue(dataSet);
-        return data;
+//        MutableLiveData<List<Event>> data = new MutableLiveData<>();
+        exploreData.setValue(addList);
+        return exploreData;
 
     }
 
@@ -86,14 +94,10 @@ public class EventsRepository {
         reference.child("joinedEvents").child(userId).child(eventId).setValue(eventMap);
     }
 
-    public List<Event> getEventList() {
-        return dataSet;
-    }
-
     private void loadEvents() {
         DatabaseReference mreference = mDatabase.child("events");
-        mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
-        mExloreMapFragmentViewModel = ExploreMapFragmentViewModel.getInstance();
+//        mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
+//        mExloreMapFragmentViewModel = ExploreMapFragmentViewModel.getInstance();
         mreference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -119,8 +123,9 @@ public class EventsRepository {
 
                 }
                 Log.d("-------------------", addList.toString());
-                mExploreEventListFragmentViewModel.addEvents(addList);
-                mExloreMapFragmentViewModel.addEvents(addList);
+                exploreData.postValue(addList);
+//                mExploreEventListFragmentViewModel.addEvents(addList);
+//                mExloreMapFragmentViewModel.addEvents(addList);
             }
 
             @Override
@@ -130,16 +135,77 @@ public class EventsRepository {
         });
     }
 
-    public MutableLiveData<List<Event>> getCreatedEvents() {
+    public MutableLiveData<List<Event>> getCreatedEvents(String userId) {
+        if (createdList.size() == 0)
+            loadCreatedEvents(userId);
+        createdEventsData.setValue(createdList);
+        return createdEventsData;
+    }
 
-        if (dataSet.size() == 0)
-            loadEvents();
-        MutableLiveData<List<Event>> data = new MutableLiveData<>();
-        data.setValue(dataSet);
-        return data;
+    public void loadCreatedEvents(String userId) {
+        DatabaseReference reference = mDatabase.child("createdEvents").child(userId);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "Clearing AddList");
+                createdList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    final Event newEvent = new Event();
+                    Log.d(TAG, "onDataChange: key" + snapshot.getKey());
+                    Log.d(TAG, "onDataChange: title" + snapshot.child("title").getValue());
+                    Log.d(TAG, "onDataChange: location" + snapshot.child("location").getValue());
+                    newEvent.setId(snapshot.getKey());
+                    newEvent.setTitle(snapshot.child("title").getValue().toString());
+                    newEvent.setLocation(snapshot.child("location").getValue().toString());
+                    newEvent.setImage(snapshot.child("image").getValue().toString());
+                    createdList.add(newEvent);
+                }
+                createdEventsData.postValue(createdList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
+    public MutableLiveData<List<Event>> getJoinedEvents(String userId) {
+        if (joinedList.size() == 0)
+            loadJoinedEvents(userId);
+        joinedEventsData.setValue(joinedList);
+        return joinedEventsData;
+    }
 
+    public void loadJoinedEvents(String userId) {
+        DatabaseReference reference = mDatabase.child("joinedEvents").child(userId);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "Clearing AddList");
+                joinedList.clear();
+                Log.d(TAG, "onDataChange: datasnapshot of joined "+ dataSnapshot);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    final Event newEvent = new Event();
+                    Log.d(TAG, "onDataChange: joined key" + snapshot.getKey());
+                    Log.d(TAG, "onDataChange: joined title" + snapshot.child("title").getValue());
+                    Log.d(TAG, "onDataChange: joined location" + snapshot.child("location").getValue());
+                    newEvent.setId(snapshot.getKey());
+                    newEvent.setTitle(snapshot.child("title").getValue().toString());
+                    newEvent.setLocation(snapshot.child("location").getValue().toString());
+                    newEvent.setImage(snapshot.child("image").getValue().toString());
+                    joinedList.add(newEvent);
+                }
+                joinedEventsData.postValue(joinedList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 
 }
