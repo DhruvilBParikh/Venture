@@ -68,11 +68,6 @@ public class EventFragment extends Fragment {
 
         initData();
 
-        // set default action button state
-        if(((MainActivity)getActivity()).checkSession()) {
-            setDefautlActionState(preferences.getString("userId", ""), id);
-        }
-
         actionButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -153,11 +148,16 @@ public class EventFragment extends Fragment {
         } else {
             actionButton.setEnabled(true);
             Log.d(TAG, "organizerCheck: event organizer different than current user");
+
+            // set default action button state
+            if(((MainActivity)getActivity()).checkSession()) {
+                setDefautlActionState(preferences.getString("userId", ""), id);
+            }
         }
     }
 
     public void setDefautlActionState(String userId, String eventId) {
-        // get boolean value from joined events
+        // get boolean value from joined events, true if user has joined this event
         if (true) {
             actionButton.setChecked(true);
         } else {
