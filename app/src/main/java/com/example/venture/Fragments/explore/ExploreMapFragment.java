@@ -208,9 +208,9 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
     public void onInfoWindowClick(Marker marker) {
         if(marker.getTag()!=null) {
             Log.d(TAG, "onInfoWindowClick: open event with id: " + marker.getTag());
-            ((MainActivity)getActivity()).openEventFragment(marker.getTag().toString());
-            ((MainActivity)getActivity()).changeAppBar();
-            ((MainActivity)getActivity()).hideBottomNavigationBar();
+            ((MainActivity)getActivity()).openEventFragment(marker.getTag().toString(), "EXPLORE");
+//            ((MainActivity)getActivity()).changeAppBar();
+//            ((MainActivity)getActivity()).hideBottomNavigationBar();
         }
     }
 }

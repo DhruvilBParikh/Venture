@@ -159,21 +159,21 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public void openEventFragment(String eventId) {
+    public void openEventFragment(String eventId, String tag) {
         Log.d(TAG, "openEventFragment: opening event with id: " + eventId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, new EventFragment(eventId));
-        transaction.addToBackStack(null);
+        transaction.replace(R.id.container, new EventFragment(eventId), tag);
+//        transaction.addToBackStack(null);
         transaction.commit();
     }
 
-    public void changeAppBar() {
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
+//    public void changeAppBar() {
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//    }
 
-    public void hideBottomNavigationBar() {
-        bottomNavigation.setVisibility(View.GONE);
-    }
+//    public void hideBottomNavigationBar() {
+//        bottomNavigation.setVisibility(View.GONE);
+//    }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {

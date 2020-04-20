@@ -188,6 +188,7 @@ public class AddEventFragment extends Fragment {
                 event.setDate(mDate.getText().toString());
                 event.setTime(mTime.getText().toString());
                 event.setOrganizer(organizer);
+                event.setOrganizerId(userId);
                 String eventId = mEventViewModel.addEvent(event);
 
                 //Adding in Cretaed and joined events in User Node
