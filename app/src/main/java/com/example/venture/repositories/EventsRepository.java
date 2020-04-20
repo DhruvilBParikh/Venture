@@ -3,34 +3,18 @@ package com.example.venture.repositories;
 /*
  * Singleton pattern
  */
-
-import android.nfc.Tag;
 import android.util.Log;
-import android.widget.TextView;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
-
-import com.example.venture.Fragments.explore.ExploreEventListFragment;
 import com.example.venture.models.Event;
-import com.example.venture.models.User;
-import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
-import com.example.venture.viewmodels.explore.ExploreMapFragmentViewModel;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 public class EventsRepository {
 
@@ -60,30 +44,18 @@ public class EventsRepository {
         return instance;
     }
 
-    public MutableLiveData<List<Event>> getEvents() {
-
-        if (addList.size() == 0)
-            loadEvents();
-//        MutableLiveData<List<Event>> data = new MutableLiveData<>();
-        exploreData.setValue(addList);
-        return exploreData;
-
-    }
-
     public String addEvent(Event event, String userId) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
         Log.d(TAG, "addEvent: "+event.getTitle());
         reference.push().setValue(event);
         String eventId = reference.push().getKey();
         Log.d(TAG, "addEvent: event id is::::" + eventId);
-
         HashMap<String, String> eventMap = new HashMap<>();
         eventMap.put("title", event.getTitle());
         eventMap.put("location", event.getLocation());
         eventMap.put("date", event.getDate());
         eventMap.put("time", event.getTime());
         eventMap.put("image", event.getImage());
-
         addCreatedEvent(eventMap,eventId,userId);
         return eventId;
     }
@@ -92,6 +64,13 @@ public class EventsRepository {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("createdEvents").child(userId).child(eventId).setValue(eventMap);
         reference.child("joinedEvents").child(userId).child(eventId).setValue(eventMap);
+    }
+
+    public MutableLiveData<List<Event>> getEvents() {
+        if (addList.size() == 0)
+            loadEvents();
+        exploreData.setValue(addList);
+        return exploreData;
     }
 
     private void loadEvents() {
@@ -142,7 +121,7 @@ public class EventsRepository {
         return createdEventsData;
     }
 
-    public void loadCreatedEvents(String userId) {
+    private void loadCreatedEvents(String userId) {
         DatabaseReference reference = mDatabase.child("createdEvents").child(userId);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -178,7 +157,7 @@ public class EventsRepository {
         return joinedEventsData;
     }
 
-    public void loadJoinedEvents(String userId) {
+    private void loadJoinedEvents(String userId) {
         DatabaseReference reference = mDatabase.child("joinedEvents").child(userId);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
