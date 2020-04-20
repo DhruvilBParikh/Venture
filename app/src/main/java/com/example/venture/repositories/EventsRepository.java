@@ -12,7 +12,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,6 +36,8 @@ public class EventsRepository {
     private MutableLiveData<List<Event>> exploreData = new MutableLiveData<>();
     private MutableLiveData<List<Event>> createdEventsData = new MutableLiveData<>();
     private MutableLiveData<List<Event>> joinedEventsData = new MutableLiveData<>();
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
 
 //    private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
 //    private ExploreMapFragmentViewModel mExloreMapFragmentViewModel;
@@ -129,15 +135,25 @@ public class EventsRepository {
                 Log.d(TAG, "Clearing AddList");
                 createdList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    final Event newEvent = new Event();
-                    Log.d(TAG, "onDataChange: key" + snapshot.getKey());
-                    Log.d(TAG, "onDataChange: title" + snapshot.child("title").getValue());
-                    Log.d(TAG, "onDataChange: location" + snapshot.child("location").getValue());
-                    newEvent.setId(snapshot.getKey());
-                    newEvent.setTitle(snapshot.child("title").getValue().toString());
-                    newEvent.setLocation(snapshot.child("location").getValue().toString());
-                    newEvent.setImage(snapshot.child("image").getValue().toString());
-                    createdList.add(newEvent);
+                    String stringDate = snapshot.child("date").getValue() + " " + snapshot.child("time").getValue();
+                    Date date = null;
+                    try {
+                        date = sdf.parse(stringDate);
+                        Log.d(TAG, "onDataChange: date "+date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if(date.after(new Date())){
+                        final Event newEvent = new Event();
+                        Log.d(TAG, "onDataChange: key" + snapshot.getKey());
+                        Log.d(TAG, "onDataChange: title" + snapshot.child("title").getValue());
+                        Log.d(TAG, "onDataChange: location" + snapshot.child("location").getValue());
+                        newEvent.setId(snapshot.getKey());
+                        newEvent.setTitle(snapshot.child("title").getValue().toString());
+                        newEvent.setLocation(snapshot.child("location").getValue().toString());
+                        newEvent.setImage(snapshot.child("image").getValue().toString());
+                        createdList.add(newEvent);
+                    }
                 }
                 createdEventsData.postValue(createdList);
             }
@@ -166,15 +182,26 @@ public class EventsRepository {
                 joinedList.clear();
                 Log.d(TAG, "onDataChange: datasnapshot of joined "+ dataSnapshot);
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    final Event newEvent = new Event();
-                    Log.d(TAG, "onDataChange: joined key" + snapshot.getKey());
-                    Log.d(TAG, "onDataChange: joined title" + snapshot.child("title").getValue());
-                    Log.d(TAG, "onDataChange: joined location" + snapshot.child("location").getValue());
-                    newEvent.setId(snapshot.getKey());
-                    newEvent.setTitle(snapshot.child("title").getValue().toString());
-                    newEvent.setLocation(snapshot.child("location").getValue().toString());
-                    newEvent.setImage(snapshot.child("image").getValue().toString());
-                    joinedList.add(newEvent);
+                    String stringDate = snapshot.child("date").getValue() + " " + snapshot.child("time").getValue();
+                    Date date = null;
+                    try {
+                        date = sdf.parse(stringDate);
+                        Log.d(TAG, "onDataChange: date "+date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if(date.after(new Date())){
+                        Log.d(TAG, "onDataChange: event "+ snapshot.child("title").getValue().toString() + " will be in future");
+                        final Event newEvent = new Event();
+                        Log.d(TAG, "onDataChange: joined key" + snapshot.getKey());
+                        Log.d(TAG, "onDataChange: joined title" + snapshot.child("title").getValue());
+                        Log.d(TAG, "onDataChange: joined location" + snapshot.child("location").getValue());
+                        newEvent.setId(snapshot.getKey());
+                        newEvent.setTitle(snapshot.child("title").getValue().toString());
+                        newEvent.setLocation(snapshot.child("location").getValue().toString());
+                        newEvent.setImage(snapshot.child("image").getValue().toString());
+                        joinedList.add(newEvent);
+                    }
                 }
                 joinedEventsData.postValue(joinedList);
             }
