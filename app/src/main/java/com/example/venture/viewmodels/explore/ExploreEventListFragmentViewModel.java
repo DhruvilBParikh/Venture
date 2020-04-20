@@ -77,4 +77,8 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
         return EventsRepository.getInstance().getJoinedEvents(userId);
     }
 
+    public LiveData<List<Event>> getHistory(String userId) {
+        return EventsRepository.getInstance().getHistory(userId);
+    }
+
 }

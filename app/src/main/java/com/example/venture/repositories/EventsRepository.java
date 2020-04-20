@@ -31,11 +31,13 @@ public class EventsRepository {
     private List<Event> addList = new ArrayList<>();
     private List<Event> createdList = new ArrayList<>();
     private List<Event> joinedList = new ArrayList<>();
+    private List<Event> historyList = new ArrayList<>();
 
     //MutableLiveData
     private MutableLiveData<List<Event>> exploreData = new MutableLiveData<>();
     private MutableLiveData<List<Event>> createdEventsData = new MutableLiveData<>();
     private MutableLiveData<List<Event>> joinedEventsData = new MutableLiveData<>();
+    private MutableLiveData<List<Event>> historyData = new MutableLiveData<>();
 
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
 
@@ -214,4 +216,51 @@ public class EventsRepository {
 
     }
 
+    public MutableLiveData<List<Event>> getHistory(String userId) {
+        if (historyList.size() == 0)
+            loadHistory(userId);
+        historyData.setValue(historyList);
+        return historyData;
+    }
+
+    private void loadHistory(String userId) {
+        DatabaseReference reference = mDatabase.child("joinedEvents").child(userId);
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "Clearing AddList");
+                historyList.clear();
+                Log.d(TAG, "onDataChange: datasnapshot of joined "+ dataSnapshot);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String stringDate = snapshot.child("date").getValue() + " " + snapshot.child("time").getValue();
+                    Date date = null;
+                    try {
+                        date = sdf.parse(stringDate);
+                        Log.d(TAG, "onDataChange: date "+date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if(date.before(new Date())){
+                        Log.d(TAG, "onDataChange: event "+ snapshot.child("title").getValue().toString() + " was in the past");
+                        final Event newEvent = new Event();
+                        Log.d(TAG, "onDataChange: history key" + snapshot.getKey());
+                        Log.d(TAG, "onDataChange: history title" + snapshot.child("title").getValue());
+                        Log.d(TAG, "onDataChange: history location" + snapshot.child("location").getValue());
+                        newEvent.setId(snapshot.getKey());
+                        newEvent.setTitle(snapshot.child("title").getValue().toString());
+                        newEvent.setLocation(snapshot.child("location").getValue().toString());
+                        newEvent.setImage(snapshot.child("image").getValue().toString());
+                        historyList.add(newEvent);
+                    }
+                }
+                historyData.postValue(historyList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
 }
