@@ -165,6 +165,7 @@ public class EventFragment extends Fragment {
             Log.d(TAG, "organizerCheck: current user organized this event");
             actionButton.setChecked(true);
             actionButton.setEnabled(false);
+            organizerText.setText("You");
         } else {
             actionButton.setEnabled(true);
             Log.d(TAG, "organizerCheck: event organizer different than current user");

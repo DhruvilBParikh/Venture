@@ -1,8 +1,5 @@
 package com.example.venture.viewmodels.event;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -35,26 +32,6 @@ public class EventFragmentViewModel extends ViewModel {
 
     public LiveData<Event> getEvent() {
         return event;
-    }
-
-    public void addEvent(final Event e) {
-        Log.d(TAG, "addEvent: " + e.toString());
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected void onPostExecute(Void Void) {
-                super.onPostExecute(Void);
-
-                Log.d("---currentEvent: ---", e.toString());
-                event.postValue(e);
-                Log.d("---end: ---", "here");
-
-            }
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                return null;
-            }
-        }.execute();
     }
 
     public boolean hasJoinedEvent(String userId, String eventid) {

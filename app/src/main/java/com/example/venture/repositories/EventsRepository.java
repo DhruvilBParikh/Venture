@@ -5,6 +5,7 @@ package com.example.venture.repositories;
  */
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import com.example.venture.models.Event;
 import com.example.venture.models.User;
@@ -49,6 +50,7 @@ public class EventsRepository {
     private MutableLiveData<List<Event>> createdEventsData = new MutableLiveData<>();
     private MutableLiveData<List<Event>> joinedEventsData = new MutableLiveData<>();
     private MutableLiveData<List<Event>> historyData = new MutableLiveData<>();
+    private MutableLiveData<Event> currentEvent = new MutableLiveData<>();
 
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
     
@@ -65,20 +67,25 @@ public class EventsRepository {
         return instance;
     }
 
-    public String addEvent(Event event, String userId) {
+    public void addEvent(final Event event, final String userId) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
         Log.d(TAG, "addEvent: "+event.getTitle());
         reference.push().setValue(event);
-        String eventId = reference.push().getKey();
-        Log.d(TAG, "addEvent: event id is::::" + eventId);
-        HashMap<String, String> eventMap = new HashMap<>();
-        eventMap.put("title", event.getTitle());
-        eventMap.put("location", event.getLocation());
-        eventMap.put("date", event.getDate());
-        eventMap.put("time", event.getTime());
-        eventMap.put("image", event.getImage());
-        addCreatedEvent(eventMap,eventId,userId);
-        return eventId;
+        final String[] eventId = {""};
+        reference.push().setValue(event, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                eventId[0] = databaseReference.getKey();
+                Log.d(TAG, "addEvent: event id is::::" + eventId[0]);
+                HashMap<String, String> eventMap = new HashMap<>();
+                eventMap.put("title", event.getTitle());
+                eventMap.put("location", event.getLocation());
+                eventMap.put("date", event.getDate());
+                eventMap.put("time", event.getTime());
+                eventMap.put("image", event.getImage());
+                addCreatedEvent(eventMap, eventId[0], userId);
+            }
+        });
     }
 
     public void addCreatedEvent(HashMap<String, String> eventMap, String eventId, String userId) {
@@ -89,9 +96,7 @@ public class EventsRepository {
 
     public MutableLiveData<Event> getEvent(String id) {
         loadEvent(id);
-        MutableLiveData<Event> e = new MutableLiveData<>();
-        e.setValue(event);
-        return e;
+        return currentEvent;
     }
 
     public MutableLiveData<List<Event>> getEvents() {
@@ -315,7 +320,8 @@ public class EventsRepository {
                 event.setTime(((HashMap)dataSnapshot.getValue()).get("time").toString());
                 event.setTitle(((HashMap)dataSnapshot.getValue()).get("title").toString());
 
-                eventFragmentViewModel.addEvent(event);
+                currentEvent.postValue(event);
+
             }
 
             @Override
@@ -353,20 +359,6 @@ public class EventsRepository {
             }
         });
         return joinedEventCheck;
-
-//        if(mDatabase.child("joinedEvents").child(userId).equalTo(user).addChildEventListener()) {
-//            Log.d(TAG, "hasJoinedEvent: user key exists");
-//            Log.d(TAG, "hasJoinedEvent: " + mDatabase.child("joinedEvents").child(userId).child(eventId));
-//            if(mDatabase.child("joinedEvents").child(userId).child(eventId)!=null) {
-//                Log.d(TAG, "hasJoinedEvent: event key exists");
-//                return true;
-//            }
-//            Log.d(TAG, "hasJoinedEvent: event key does not exists");
-//            return false;
-//        } else {
-//            Log.d(TAG, "hasJoinedEvent: user key does not exists");
-//            return false;
-//        }
     }
 
     public void addJoinedEvent(String userId, String eventId, HashMap<String, String> eventObj) {
