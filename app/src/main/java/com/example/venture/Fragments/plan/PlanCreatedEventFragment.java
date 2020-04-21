@@ -1,71 +1,81 @@
 package com.example.venture.Fragments.plan;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.venture.R;
+import com.example.venture.adapters.CreatedEventsRecyclerViewAdapter;
+import com.example.venture.models.Event;
+import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PlanCreatedEventFragment} interface
- * to handle interaction events.
- * Use the {@link PlanCreatedEventFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.List;
+
 public class PlanCreatedEventFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String TAG = "PlanCreatedEventFragment";
+    private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
 
+    //vars
+    private CreatedEventsRecyclerViewAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+    private SharedPreferences mPreferences;
+    private String userId;
 
     public PlanCreatedEventFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PlanCreatedEventFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PlanCreatedEventFragment newInstance(String param1, String param2) {
-        PlanCreatedEventFragment fragment = new PlanCreatedEventFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
+    @SuppressLint("LongLogTag")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_plan_created_event, container, false);
+        View view = inflater.inflate(R.layout.fragment_plan_created_event, container, false);
+        mRecyclerView = view.findViewById(R.id.created_event_list_recyclerview);
+        mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        Log.d(TAG, "onCreateView: before initdata");
+        initData();
+        initRecyclerView();
+        return view;
     }
 
+    @SuppressLint("LongLogTag")
+    private void initData() {
+
+        Log.d(TAG, "initData: preparing data.");
+        userId = mPreferences.getString("userId", "");
+        mExploreEventListFragmentViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
+        mExploreEventListFragmentViewModel.getCreatedEvents(userId).observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
+            @Override
+            public void onChanged(List<Event> events) {
+                Log.d("----observer--", events.toString());
+                mAdapter.setmEvents(events);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @SuppressLint("LongLogTag")
+    private void initRecyclerView() {
+        Log.d(TAG, "initRecyclerView: init recyclerview.");
+        Log.d(TAG, "initRecyclerView: userId:"+ userId);
+        mAdapter = new CreatedEventsRecyclerViewAdapter(getContext(), mExploreEventListFragmentViewModel.getCreatedEvents(userId).getValue());
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
 
 }

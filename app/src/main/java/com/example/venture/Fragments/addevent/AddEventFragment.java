@@ -5,8 +5,8 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,9 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.venture.MainActivity;
@@ -33,22 +31,15 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.datepicker.MaterialCalendar;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialStyledDatePickerDialog;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textview.MaterialTextView;
 
-import java.text.ParseException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,6 +56,7 @@ public class AddEventFragment extends Fragment {
     private DatePickerDialog.OnDateSetListener mDateSetListener;
     private TimePickerDialog.OnTimeSetListener mTimeSetListener;
     private Calendar calendar = Calendar.getInstance();
+    private AutocompleteSupportFragment autocompleteFragment;
     private int mMonth = calendar.get(Calendar.MONTH);
     private int mDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
     private int mYear = calendar.get(Calendar.YEAR);
@@ -76,12 +68,14 @@ public class AddEventFragment extends Fragment {
     private Place mPlace;
     private String location;
     private LatLng latLng;
-
+    private String city;
+    private String state;
     private SharedPreferences mPreferences;
 
     //viewmodels
     private ExploreEventListFragmentViewModel mEventViewModel;
     private UsersViewModel mUserViewModel;
+//    private ExploreEventListFragmentViewModel mCreatedEventViewModel;
 
     public AddEventFragment() {
         // Required empty public constructor
@@ -99,6 +93,112 @@ public class AddEventFragment extends Fragment {
         mAddEvent = view.findViewById(R.id.buttonAddEvent);
         calendar = Calendar.getInstance();
 
+        String apiKey = "AIzaSyCA0NaAI0q_DC1oagzC8hDnp7r1bv7j8JE";
+        if (!Places.isInitialized()) {
+            Places.initialize(getContext(), apiKey);
+        }
+        autocompleteFragment = (AutocompleteSupportFragment)
+                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteFragment.setHint("Add Meeting Point");
+
+
+        setDate();
+        setTime();
+        autoSearch();
+
+        mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        final String userId = mPreferences.getString("userId", "");
+        final String organizer = mPreferences.getString("name", "");
+
+        mEventViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
+        mUserViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+//        mCreatedEventViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
+
+        mAddEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: Latlng"+latLng);
+                Log.d(TAG, "onClick: Place Name:"+location);
+                Event event = new Event();
+                event.setTitle(mTitle.getText().toString());
+                event.setDetails(mDetails.getText().toString());
+                event.setImage("sf_trial.jpg");
+                event.setLocation(location);
+                event.setLatitude(latLng.latitude);
+                event.setLongitude(latLng.longitude);
+                event.setDate(mDate.getText().toString());
+                event.setTime(mTime.getText().toString());
+                event.setOrganizerId(userId);
+                event.setCity(city);
+                event.setState(state);
+                event.setOrganizer(organizer);
+                mEventViewModel.addEvent(event, userId);
+
+//                //Adding in Created and joined events in User Node
+//                HashMap<String, String> eventMap = new HashMap<String, String>();
+//                eventMap.put("title", mTitle.getText().toString());
+//                eventMap.put("location", location);
+//                eventMap.put("date", mDate.getText().toString());
+//                eventMap.put("time", mTime.getText().toString());
+//                eventMap.put("image", "sf_trail.jpg");
+//
+//                mCreatedEventViewModel.addCreatedEvent(eventMap, eventId, userId);
+
+                ((MainActivity)getActivity()).openFragment("EXPLORE");
+            }
+        });
+
+        return view;
+    }
+
+    private void autoSearch() {
+//        String apiKey = "AIzaSyCA0NaAI0q_DC1oagzC8hDnp7r1bv7j8JE";
+//        if (!Places.isInitialized()) {
+//            Places.initialize(getContext(), apiKey);
+//        }
+
+        // Initialize the AutocompleteSupportFragment.
+//        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+//                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+//        autocompleteFragment.setHint("Add Meeting Point");
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                Log.d(TAG, "onPlaceSelected: " + place.toString());
+                if (!place.getName().isEmpty()) {
+                    latLng = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
+                    location = place.getName();
+                    Log.d(TAG, "onPlaceSelected: "+latLng);
+                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    List<Address> addresses = null;
+                    try {
+                        addresses = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if(addresses.size()>0) {
+                        city = addresses.get(0).getLocality();
+                        state = addresses.get(0).getAdminArea();
+                        Log.d(TAG, "onPlaceSelected: Geocoder "+addresses.get(0));
+                        Log.d(TAG, "onPlaceSelected: Geocoder "+addresses.get(0).getLocality());
+                    }
+                    Log.d(TAG, "onPlaceSelected: "+place.getName());
+                }
+            }
+            @Override
+            public void onError(Status status) {
+                Log.d(TAG, "onError: error occurred, status: " + status);
+            }
+        });
+
+    }
+
+    public void setDate() {
         mDate.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -111,7 +211,7 @@ public class AddEventFragment extends Fragment {
                         android.R.style.Theme_DeviceDefault_Dialog_MinWidth,
                         mDateSetListener,
                         year, month, day
-                        );
+                );
                 dialog.getWindow();
                 dialog.show();
             }
@@ -128,7 +228,9 @@ public class AddEventFragment extends Fragment {
                 mDate.setText(date);
             }
         };
+    }
 
+    public void setTime() {
         mTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,79 +266,5 @@ public class AddEventFragment extends Fragment {
                 }
             }
         };
-        autoSearch();
-
-        mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        final String userId = mPreferences.getString("userId", "");
-        final String organizer = mPreferences.getString("name", "");
-
-        mEventViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
-        mUserViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
-
-        mAddEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: Latlng"+latLng);
-                Log.d(TAG, "onClick: Place Name:"+location);
-                Event event = new Event();
-                event.setTitle(mTitle.getText().toString());
-                event.setDetails(mDetails.getText().toString());
-                event.setImage("sf_trial.jpg");
-                event.setLocation(location);
-                event.setLatitude(latLng.latitude);
-                event.setLongitude(latLng.longitude);
-                event.setDate(mDate.getText().toString());
-                event.setTime(mTime.getText().toString());
-                event.setOrganizer(organizer);
-                event.setOrganizerId(userId);
-                String eventId = mEventViewModel.addEvent(event);
-
-                //Adding in Cretaed and joined events in User Node
-                HashMap<String, String> eventMap = new HashMap<String, String>();
-                eventMap.put("title", mTitle.getText().toString());
-                eventMap.put("location", location);
-                eventMap.put("image", "sf_trail.jpg");
-
-                mUserViewModel.addCreatedEvent(eventMap, eventId, userId);
-                ((MainActivity)getActivity()).openFragment("EXPLORE");
-            }
-        });
-
-        return view;
     }
-
-    private void autoSearch() {
-        String apiKey = "AIzaSyCA0NaAI0q_DC1oagzC8hDnp7r1bv7j8JE";
-        if (!Places.isInitialized()) {
-            Places.initialize(getContext(), apiKey);
-        }
-
-        // Initialize the AutocompleteSupportFragment.
-        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
-                getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-        autocompleteFragment.setHint("Add Meeting Point");
-
-        // Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
-
-        // Set up a PlaceSelectionListener to handle the response.
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                Log.d(TAG, "onPlaceSelected: " + place.toString());
-                if (!place.getName().isEmpty()) {
-                    latLng = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
-                    location = place.getName();
-                    Log.d(TAG, "onPlaceSelected: "+latLng);
-                    Log.d(TAG, "onPlaceSelected: "+place.getName());
-                }
-            }
-            @Override
-            public void onError(Status status) {
-                Log.d(TAG, "onError: error occurred, status: " + status);
-            }
-        });
-
-    }
-
 }
