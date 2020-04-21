@@ -4,21 +4,13 @@ package com.example.venture.repositories;
  * Singleton pattern
  */
 
-import android.nfc.Tag;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.venture.models.Event;
-import com.example.venture.models.User;
 import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,78 +19,80 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
-public class EventsRepository {
+public class EventsRepository  {
 
-    private String TAG = "-----EventsRepo------";
+    private static String TAG = "Repository";
 
-    private List<Event> addList = new ArrayList<>();
+    private static DatabaseReference mreference;
     private static EventsRepository instance;
-    private ArrayList<Event> allEventsdataSet = new ArrayList<>();
-    private ArrayList<Event> dataSet = new ArrayList<>();
     private static DatabaseReference mDatabase;
-    private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
-    private DatabaseReference mreference;
+    private static ValueEventListener mAllValueEventListener;
+    private static ValueEventListener mSearchValueEventListener;
+
+    private MutableLiveData<List<Event>> allEventsData = new MutableLiveData<>();
+    private List<Event> allList = new ArrayList<>();
+
+    private MutableLiveData<List<Event>> searchEventsData = new MutableLiveData<>();
+    private List<Event> searchList = new ArrayList<>();
+
 
 
     public static EventsRepository getInstance() {
         if (instance == null) {
             instance = new EventsRepository();
         }
-        mDatabase = FirebaseDatabase.getInstance().getReference();
         return instance;
     }
 
-    public MutableLiveData<List<Event>> getEvents(String eventType, String location, double latitude, double longitude) {
-        mreference = mDatabase.child("trialevents");
-        mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
+    public MutableLiveData<List<Event>> getEvents(String eventType, String location) {
 
-        switch (eventType){
-            case "allEvents": loadAllEvents();
-                                break;
-            case "searchEvents": Log.d("inside switch case", eventType);
-                loadSearchEvents(location, latitude, longitude);
-                                break;
+        switch (eventType) {
+            case "allEvents":
+                if (allList.size() == 0)
+                    loadAllEvents();
+                allEventsData.setValue(allList);
+                return allEventsData;
 
-            default: loadAllEvents();
+            case "searchEvents":
+                loadSearchEvents(location);
+                searchEventsData.setValue(searchList);
+                return searchEventsData;
+
+            default:
+                if (allList.size() == 0)
+                    loadAllEvents();
+                allEventsData.setValue(allList);
         }
-
-        MutableLiveData<List<Event>> data = new MutableLiveData<>();
-        data.setValue(dataSet);
-        return data;
-
-    }
-
-    public List<Event> getEventList() {
-        return dataSet;
+        return allEventsData;
     }
 
 
     private void loadAllEvents() {
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mreference = mDatabase.child("trialevents");
         mreference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d(TAG, "Clearing AddList");
-                addList.clear();
+                allList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     Log.d(TAG, snapshot.getKey());
                     Log.d(TAG, snapshot.child("location").toString());
-                    Log.d(TAG, String.valueOf(snapshot.child("longitude").getValue()));
-
 
                     final Event newEvent = new Event();
                     newEvent.setTitle(snapshot.child("title").getValue().toString());
                     newEvent.setLocation(snapshot.child("location").getValue().toString());
                     newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
                     newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
-                    addList.add(newEvent);
+                    allList.add(newEvent);
 
                 }
-                Log.d("-------------------", addList.toString());
-                mExploreEventListFragmentViewModel.addEvents(addList);
+                Log.d("-------------------", allList.toString());
+
+                allEventsData.postValue(allList);
             }
 
             @Override
@@ -106,15 +100,20 @@ public class EventsRepository {
 
             }
         });
+
     }
 
-    private void loadSearchEvents(final String location, double latitude, double longitude) {
+    private void loadSearchEvents(final String location) {
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mreference = mDatabase.child("trialevents");
 
         mreference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d(TAG, "loadSearchEvents");
-                addList.clear();
+                searchList.clear();
+                searchEventsData = new MutableLiveData<>();
                 String searchLocation = location.toLowerCase();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -122,18 +121,18 @@ public class EventsRepository {
                     String dbState = snapshot.child("state").getValue().toString().toLowerCase();
                     Log.d("To search", location);
 
-                    if(searchLocation.equals(dbCity) || searchLocation.equals(dbState))
-                    {
+                    if (searchLocation.equals(dbCity) || searchLocation.equals(dbState)) {
                         final Event newEvent = new Event();
                         newEvent.setTitle(snapshot.child("title").getValue().toString());
                         newEvent.setLocation(snapshot.child("location").getValue().toString());
                         newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
                         newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
-                        addList.add(newEvent);
+                        searchList.add(newEvent);
                     }
                 }
-                Log.d("---------ans----------", addList.get(0).getTitle());
-                mExploreEventListFragmentViewModel.addEvents(addList);
+                Log.d("-------------------", searchList.get(0).getTitle());
+                searchEventsData.postValue(searchList);
+                ExploreEventListFragmentViewModel.getInstance().postSearchEvents(searchList);
             }
 
             @Override
@@ -141,6 +140,5 @@ public class EventsRepository {
 
             }
         });
-
     }
 }
