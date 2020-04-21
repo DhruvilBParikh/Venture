@@ -27,8 +27,9 @@ public class EventsRepository  {
     private static DatabaseReference mreference;
     private static EventsRepository instance;
     private static DatabaseReference mDatabase;
-    private static ValueEventListener mAllValueEventListener;
-    private static ValueEventListener mSearchValueEventListener;
+    private boolean initListeners = false;
+    private ValueEventListener mAllValueEventListener;
+    private ValueEventListener mSearchValueEventListener;
 
     private MutableLiveData<List<Event>> allEventsData = new MutableLiveData<>();
     private List<Event> allList = new ArrayList<>();
@@ -46,14 +47,10 @@ public class EventsRepository  {
     }
 
     public MutableLiveData<List<Event>> getEvents(String eventType, String location) {
+        if(!initListeners)
+            initListeners();
 
         switch (eventType) {
-            case "allEvents":
-                if (allList.size() == 0)
-                    loadAllEvents();
-                allEventsData.setValue(allList);
-                return allEventsData;
-
             case "searchEvents":
                 loadSearchEvents(location);
                 searchEventsData.setValue(searchList);
@@ -67,12 +64,8 @@ public class EventsRepository  {
         return allEventsData;
     }
 
-
-    private void loadAllEvents() {
-
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mreference = mDatabase.child("trialevents");
-        mreference.addValueEventListener(new ValueEventListener() {
+    private void initListeners() {
+        mAllValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d(TAG, "Clearing AddList");
@@ -99,7 +92,16 @@ public class EventsRepository  {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+
+    }
+
+
+    private void loadAllEvents() {
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mreference = mDatabase.child("trialevents");
+        mreference.addValueEventListener(mAllValueEventListener);
 
     }
 
@@ -107,8 +109,7 @@ public class EventsRepository  {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mreference = mDatabase.child("trialevents");
-
-        mreference.addListenerForSingleValueEvent(new ValueEventListener() {
+        mSearchValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d(TAG, "loadSearchEvents");
@@ -134,11 +135,13 @@ public class EventsRepository  {
                 searchEventsData.postValue(searchList);
                 ExploreEventListFragmentViewModel.getInstance().postSearchEvents(searchList);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        mreference.addListenerForSingleValueEvent(mSearchValueEventListener);
+
     }
 }
