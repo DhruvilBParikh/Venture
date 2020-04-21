@@ -5,6 +5,7 @@ package com.example.venture.repositories;
  */
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
 import com.example.venture.models.Event;
 import com.google.firebase.database.DataSnapshot;
@@ -52,20 +53,25 @@ public class EventsRepository {
         return instance;
     }
 
-    public String addEvent(Event event, String userId) {
+    public void addEvent(final Event event, final String userId) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
         Log.d(TAG, "addEvent: "+event.getTitle());
-        reference.push().setValue(event);
-        String eventId = reference.push().getKey();
-        Log.d(TAG, "addEvent: event id is::::" + eventId);
-        HashMap<String, String> eventMap = new HashMap<>();
-        eventMap.put("title", event.getTitle());
-        eventMap.put("location", event.getLocation());
-        eventMap.put("date", event.getDate());
-        eventMap.put("time", event.getTime());
-        eventMap.put("image", event.getImage());
-        addCreatedEvent(eventMap,eventId,userId);
-        return eventId;
+        final String[] eventId = {""};
+        reference.push().setValue(event, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                eventId[0] = databaseReference.getKey();
+                Log.d(TAG, "addEvent: event id is::::" + eventId[0]);
+                HashMap<String, String> eventMap = new HashMap<>();
+                eventMap.put("title", event.getTitle());
+                eventMap.put("location", event.getLocation());
+                eventMap.put("date", event.getDate());
+                eventMap.put("time", event.getTime());
+                eventMap.put("image", event.getImage());
+                addCreatedEvent(eventMap, eventId[0],userId);
+            }
+        });
+
     }
 
     public void addCreatedEvent(HashMap<String, String> eventMap, String eventId, String userId) {

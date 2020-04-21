@@ -27,5 +27,10 @@
     <string name="geolocateError">Unable to get current location</string>
     <string name="geolocateSuccess">Location enabled</string>
     <string name="permissionReq">Please grant permission to use your location</string>
+    <string name="cover_photo">Cover Photo</string>
+    <string name="profile_photo">Profile Photo</string>
+    <string name="name">Name</string>
+    <string name="bio">Bio</string>
+    <string name="default_bio">You haven\'t entered the bio yet. Set it by editing profile from the top.</string>
 
 </resources>

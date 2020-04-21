@@ -41,8 +41,8 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
         return mEvents;
     }
 
-    public String addEvent(Event event, String userId) {
-        return EventsRepository.getInstance().addEvent(event, userId);
+    public void addEvent(Event event, String userId) {
+        EventsRepository.getInstance().addEvent(event, userId);
     }
     
     public void addEvents(final List<Event> addevent) {
@@ -63,10 +63,6 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
                 return null;
             }
         }.execute();
-    }
-
-    public void addCreatedEvent(HashMap<String, String> eventMap, String eventId, String userId) {
-        EventsRepository.getInstance().addCreatedEvent(eventMap, eventId, userId);
     }
 
     public LiveData<List<Event>> getCreatedEvents(String userId) {

@@ -7,25 +7,17 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStore;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
-
 import com.example.venture.MainActivity;
 import com.example.venture.R;
-import com.example.venture.models.User;
 import com.example.venture.viewmodels.explore.UsersViewModel;
-
-import org.w3c.dom.Text;
 
 
 /**
@@ -34,6 +26,7 @@ import org.w3c.dom.Text;
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
+    private ImageButton profileImage;
     private TextView userName;
     private TextView bioDescription;
     private UsersViewModel usersViewModel;
@@ -49,6 +42,7 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view =inflater.inflate(R.layout.fragment_profile, container, false);
+        profileImage = view.findViewById(R.id.profileImage);
         userName = view.findViewById(R.id.userName);
         bioDescription = view.findViewById(R.id.bioDescription);
         mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -56,8 +50,15 @@ public class ProfileFragment extends Fragment {
         String name = mPreferences.getString("name", "");
         String bio = mPreferences.getString("bio", "");
         userName.setText(name);
-        if(bio!="")
+        if(!bio.equals(""))
             bioDescription.setText(bio);
+
+        profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         setHasOptionsMenu(true);
         return view;
     }
