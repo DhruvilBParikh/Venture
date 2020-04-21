@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -24,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,11 +34,11 @@ public class EventFragment extends Fragment {
 
     private static final String TAG = "EventFragment";
 
-    private String id;
+    private String id, title, location, date, time, organizerId, image;
     private TextView titleText, locationText, dateText, timeText, descriptionText, organizerText;
-    private String organizerId;
 
     private ToggleButton actionButton;
+    private ImageView eventImage;
 
     private SharedPreferences preferences;
 
@@ -61,6 +63,7 @@ public class EventFragment extends Fragment {
         timeText = view.findViewById(R.id.eventTime);
         descriptionText = view.findViewById(R.id.eventDescription);
         organizerText = view.findViewById(R.id.eventOrganiser);
+        eventImage = view.findViewById(R.id.eventImage);
 
         preferences = getActivity().getPreferences(Context.MODE_PRIVATE);
 
@@ -75,9 +78,20 @@ public class EventFragment extends Fragment {
                     if (isChecked) {
                         Log.d(TAG, "onCheckedChanged: is going");
                         // add data to joined events
+                        HashMap<String, String> eventObject = new HashMap<>();
+                        eventObject.put("title", title);
+                        eventObject.put("location", location);
+                        eventObject.put("date", date);
+                        eventObject.put("time", time);
+//                        eventObject.put("image", image);
+                        Log.d(TAG, "onCheckedChanged: adding event to joined events: " + eventObject);
+                        EventFragmentViewModel.getInstance().addJoinedEvent(preferences.getString("userId", ""), id, eventObject);
+
                     } else {
                         Log.d(TAG, "onCheckedChanged: not going");
                         // remove data from joined events
+                        Log.d(TAG, "onCheckedChanged: removing event from joined events: " + id);
+                        EventFragmentViewModel.getInstance().removeJoinedEvent(preferences.getString("userId", ""), id);
                     }
                 } else {
                     Log.d(TAG, "onCheckedChanged: user is not logged in, opening LoginSignupFragment, fragment tag: " + getTag());
@@ -102,6 +116,12 @@ public class EventFragment extends Fragment {
                 if(event!=null) {
                     Log.d(TAG, "onChanged: event found with title: " + event.getTitle());
                     organizerId = event.getOrganizerId();
+                    title = event.getTitle();
+                    location = event.getLocation();
+                    date = event.getDate();
+                    time = event.getTime();
+//                  set image from event.getImage()
+
                     titleText.setText(event.getTitle());
                     locationText.setText(event.getLocation());
                     dateText.setText(event.getDate());
@@ -145,6 +165,7 @@ public class EventFragment extends Fragment {
             Log.d(TAG, "organizerCheck: current user organized this event");
             actionButton.setChecked(true);
             actionButton.setEnabled(false);
+            organizerText.setText("You");
         } else {
             actionButton.setEnabled(true);
             Log.d(TAG, "organizerCheck: event organizer different than current user");
@@ -158,9 +179,12 @@ public class EventFragment extends Fragment {
 
     public void setDefautlActionState(String userId, String eventId) {
         // get boolean value from joined events, true if user has joined this event
-        if (false) {
+        boolean joined = EventFragmentViewModel.getInstance().hasJoinedEvent(preferences.getString("userId", ""), id);
+        if (joined) {
+            Log.d(TAG, "setDefautlActionState: user has joined the event");
             actionButton.setChecked(true);
         } else {
+            Log.d(TAG, "setDefautlActionState: user has not joined the event");
             actionButton.setChecked(false);
         }
     }

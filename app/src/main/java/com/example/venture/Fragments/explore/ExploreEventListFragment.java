@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.venture.R;
 import com.example.venture.adapters.EventsRecyclerViewAdapter;
@@ -45,6 +46,7 @@ public class ExploreEventListFragment extends Fragment {
     //vars
     private EventsRecyclerViewAdapter madapter;
     private RecyclerView mrecyclerView;
+    private TextView noEventsText;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -96,6 +98,7 @@ public class ExploreEventListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_explore_event_list, container, false);
         mrecyclerView = view.findViewById(R.id.event_list_recyclerview);
+        noEventsText = view.findViewById(R.id.noEvents);
         Log.d(TAG, "onCreateView: started.");
         initData();
         initRecyclerView();
@@ -113,6 +116,12 @@ public class ExploreEventListFragment extends Fragment {
             @Override
             public void onChanged(List<Event> events) {
                 Log.d("----observer--", events.toString());
+                if(events.isEmpty()) {
+                    Log.d(TAG, "onChanged: nearby events is empty");
+                    noEventsText.setVisibility(View.VISIBLE);
+                } else {
+                    noEventsText.setVisibility(View.GONE);
+                }
                 madapter.setmEvents(events);
                 madapter.notifyDataSetChanged();
 

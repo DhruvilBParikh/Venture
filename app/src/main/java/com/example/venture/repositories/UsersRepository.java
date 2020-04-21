@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 public class UsersRepository {
 
-    private static final String TAG = "EventRepository";
+    private static final String TAG = "UsersRepository";
 
     static UsersRepository instance;
     private ArrayList<User> usersList =  new ArrayList<>();
@@ -121,15 +121,7 @@ public class UsersRepository {
         Log.d(TAG, "addUser: map"+ map.values());
         Log.d(TAG, "addUser: database reference "+ reference.child("1").toString());
         reference.child(userId).setValue(map);
-//        reference.push().setValue(new User("title9", "The Turing Machine11"));
 
     }
-
-    public void addCreatedEvent(HashMap<String, String> eventMap, String eventId, String userId) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users");
-        reference.child(userId).child("createdEvents").child(eventId).setValue(eventMap);
-        reference.child(userId).child("joinedEvents").child(eventId).setValue(eventMap);
-    }
-
 
 }

@@ -30,7 +30,7 @@ import java.util.List;
 
 public class EventsRepository {
 
-    private String TAG = "-----EventsRepo------";
+    private static final String TAG = "EventsRepository";
 
     private Event event;
     private static EventsRepository instance;
@@ -50,8 +50,11 @@ public class EventsRepository {
     private MutableLiveData<List<Event>> createdEventsData = new MutableLiveData<>();
     private MutableLiveData<List<Event>> joinedEventsData = new MutableLiveData<>();
     private MutableLiveData<List<Event>> historyData = new MutableLiveData<>();
+    private MutableLiveData<Event> currentEvent = new MutableLiveData<>();
 
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+    
+    private boolean joinedEventCheck;
 
 //    private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
 //    private ExploreMapFragmentViewModel mExloreMapFragmentViewModel;
@@ -93,9 +96,7 @@ public class EventsRepository {
 
     public MutableLiveData<Event> getEvent(String id) {
         loadEvent(id);
-        MutableLiveData<Event> e = new MutableLiveData<>();
-        e.setValue(event);
-        return e;
+        return currentEvent;
     }
 
     public MutableLiveData<List<Event>> getEvents() {
@@ -147,14 +148,14 @@ public class EventsRepository {
     }
 
     public MutableLiveData<List<Event>> getCreatedEvents(String userId) {
-        if (createdList.size() == 0)
-            loadCreatedEvents(userId);
+        loadCreatedEvents(userId);
         createdEventsData.setValue(createdList);
         return createdEventsData;
     }
 
     private void loadCreatedEvents(String userId) {
         DatabaseReference reference = mDatabase.child("createdEvents").child(userId);
+        Log.d(TAG, "loadCreatedEvents: seraching created events for user: " + userId);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -193,8 +194,7 @@ public class EventsRepository {
     }
 
     public MutableLiveData<List<Event>> getJoinedEvents(String userId) {
-        if (joinedList.size() == 0)
-            loadJoinedEvents(userId);
+        loadJoinedEvents(userId);
         joinedEventsData.setValue(joinedList);
         return joinedEventsData;
     }
@@ -225,7 +225,7 @@ public class EventsRepository {
                         newEvent.setId(snapshot.getKey());
                         newEvent.setTitle(snapshot.child("title").getValue().toString());
                         newEvent.setLocation(snapshot.child("location").getValue().toString());
-                        newEvent.setImage(snapshot.child("image").getValue().toString());
+//                        newEvent.setImage(snapshot.child("image").getValue().toString());
                         joinedList.add(newEvent);
                     }
                 }
@@ -241,8 +241,7 @@ public class EventsRepository {
     }
 
     public MutableLiveData<List<Event>> getHistory(String userId) {
-        if (historyList.size() == 0)
-            loadHistory(userId);
+        loadHistory(userId);
         historyData.setValue(historyList);
         return historyData;
     }
@@ -319,7 +318,8 @@ public class EventsRepository {
                 event.setTime(((HashMap)dataSnapshot.getValue()).get("time").toString());
                 event.setTitle(((HashMap)dataSnapshot.getValue()).get("title").toString());
 
-                eventFragmentViewModel.addEvent(event);
+                currentEvent.postValue(event);
+
             }
 
             @Override
@@ -328,5 +328,47 @@ public class EventsRepository {
             }
         });
 
+    }
+
+    public boolean hasJoinedEvent(final String userId, final String eventId) {
+        Log.d(TAG, "hasJoinedEvent: checking if user: " + userId + " has joined event: " + eventId);
+
+        mDatabase.child("joinedEvents").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(userId)) {
+                    Log.d(TAG, "onDataChange: user key exists");
+                    if(dataSnapshot.child(userId).hasChild(eventId)) {
+                        Log.d(TAG, "hasJoinedEvent: event key exists");
+                        joinedEventCheck = true;
+                    } else {
+                        Log.d(TAG, "hasJoinedEvent: event key does not exists");
+                        joinedEventCheck = false;
+                    }
+                } else {
+                    Log.d(TAG, "hasJoinedEvent: user key does not exists");
+                    joinedEventCheck = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return joinedEventCheck;
+    }
+
+    public void addJoinedEvent(String userId, String eventId, HashMap<String, String> eventObj) {
+        Log.d(TAG, "addJoinedEvent: adding to joined events");
+        Log.d(TAG, "addJoinedEvent: userid: " + userId);
+        Log.d(TAG, "addJoinedEvent: eventid: " + eventId);
+        Log.d(TAG, "addJoinedEvent: event: " + eventObj);
+        mDatabase.child("joinedEvents").child(userId).child(eventId).setValue(eventObj);
+    }
+
+    public void removeJoinedEvent(String userId, String eventId) {
+        Log.d(TAG, "onCheckedChanged: removing event from joined events: " + event + " for user: " + userId);
+        mDatabase.child("joinedEvents").child(userId).child(eventId).removeValue();
     }
 }

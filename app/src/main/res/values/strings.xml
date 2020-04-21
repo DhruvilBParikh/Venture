@@ -33,7 +33,17 @@
     <string name="bio">Bio</string>
     <string name="default_bio">You haven\'t entered the bio yet. Set it by editing profile from the top.</string>
 
-    <!-- Event Fragement -->
+    <!-- ExploreListFragment -->
+    <string name="noEventsNearby">There are no events nearby!</string>
+
+    <!-- PlanFragment -->
+    <string name="noEventsCreated">You have not created any events yet</string>
+    <string name="noEventsJoined">You have not joined any events</string>
+
+    <!-- HistoryFragment -->
+    <string name="noEventsHistory">You did not participate in any events in the past</string>
+
+    <!-- EventFragment -->
     <string name="organizedBy">Organized By</string>
 
 </resources>
