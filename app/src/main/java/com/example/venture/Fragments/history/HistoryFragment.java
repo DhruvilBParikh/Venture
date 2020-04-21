@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.example.venture.R;
 import com.example.venture.adapters.HistoryRecyclerViewAdapter;
 import com.example.venture.models.Event;
@@ -36,6 +38,7 @@ public class HistoryFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private SharedPreferences mPreferences;
     private String userId;
+    private TextView noEventsText;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -46,6 +49,7 @@ public class HistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         mRecyclerView = view.findViewById(R.id.history_list_recyclerview);
+        noEventsText = view.findViewById(R.id.noEvents);
         mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
         Log.d(TAG, "onCreateView: before init data");
         initData();
@@ -61,6 +65,12 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onChanged(List<Event> events) {
                 Log.d("----observer--", events.toString());
+                if(events.isEmpty()) {
+                    Log.d(TAG, "onChanged: events history is empty");
+                    noEventsText.setVisibility(View.VISIBLE);
+                } else {
+                    noEventsText.setVisibility(View.GONE);
+                }
                 mAdapter.setmEvents(events);
                 mAdapter.notifyDataSetChanged();
             }

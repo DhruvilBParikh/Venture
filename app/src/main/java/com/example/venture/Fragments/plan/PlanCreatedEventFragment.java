@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.venture.R;
 import com.example.venture.adapters.CreatedEventsRecyclerViewAdapter;
@@ -33,6 +34,7 @@ public class PlanCreatedEventFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private SharedPreferences mPreferences;
     private String userId;
+    private TextView noEventsText;
 
     public PlanCreatedEventFragment() {
         // Required empty public constructor
@@ -45,6 +47,7 @@ public class PlanCreatedEventFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_plan_created_event, container, false);
         mRecyclerView = view.findViewById(R.id.created_event_list_recyclerview);
+        noEventsText = view.findViewById(R.id.noEvents);
         mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         Log.d(TAG, "onCreateView: before initdata");
@@ -63,6 +66,12 @@ public class PlanCreatedEventFragment extends Fragment {
             @Override
             public void onChanged(List<Event> events) {
                 Log.d("----observer--", events.toString());
+                if(events.isEmpty()) {
+                    Log.d(TAG, "onChanged: created events is empty");
+                    noEventsText.setVisibility(View.VISIBLE);
+                } else {
+                    noEventsText.setVisibility(View.GONE);
+                }
                 mAdapter.setmEvents(events);
                 mAdapter.notifyDataSetChanged();
             }

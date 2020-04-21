@@ -14,11 +14,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.venture.R;
 import com.example.venture.adapters.JoinedEventsRecyclerViewAdapter;
 import com.example.venture.models.Event;
 import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -32,6 +35,8 @@ public class PlanJoinedEventFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private SharedPreferences mPreferences;
     private String userId;
+    private TextView noEventsText;
+
     public PlanJoinedEventFragment() {
         // Required empty public constructor
     }
@@ -41,6 +46,7 @@ public class PlanJoinedEventFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_plan_joined_event, container, false);
         mRecyclerView = view.findViewById(R.id.joined_event_list_recyclerview);
+        noEventsText = view.findViewById(R.id.noEvents);
         mPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         Log.d(TAG, "onCreateView: before init data");
@@ -57,6 +63,12 @@ public class PlanJoinedEventFragment extends Fragment {
             @Override
             public void onChanged(List<Event> events) {
                 Log.d("----observer--", events.toString());
+                if(events.isEmpty()) {
+                    Log.d(TAG, "onChanged: joined events is empty");
+                    noEventsText.setVisibility(View.VISIBLE);
+                } else {
+                    noEventsText.setVisibility(View.GONE);
+                }
                 mAdapter.setmEvents(events);
                 mAdapter.notifyDataSetChanged();
             }
