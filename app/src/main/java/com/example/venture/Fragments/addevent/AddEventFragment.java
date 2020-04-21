@@ -74,7 +74,7 @@ public class AddEventFragment extends Fragment {
 
     //viewmodels
     private ExploreEventListFragmentViewModel mEventViewModel;
-    private UsersViewModel mUserViewModel;
+//    private UsersViewModel mUserViewModel;
 //    private ExploreEventListFragmentViewModel mCreatedEventViewModel;
 
     public AddEventFragment() {
@@ -111,7 +111,7 @@ public class AddEventFragment extends Fragment {
         final String organizer = mPreferences.getString("name", "");
 
         mEventViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
-        mUserViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+//        mUserViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
 //        mCreatedEventViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
 
         mAddEvent.setOnClickListener(new View.OnClickListener() {

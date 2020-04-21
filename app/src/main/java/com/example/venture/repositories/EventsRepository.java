@@ -30,7 +30,7 @@ import java.util.List;
 
 public class EventsRepository {
 
-    private String TAG = "-----EventsRepo------";
+    private static final String TAG = "EventsRepository";
 
     private Event event;
     private static EventsRepository instance;
@@ -70,7 +70,6 @@ public class EventsRepository {
     public void addEvent(final Event event, final String userId) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
         Log.d(TAG, "addEvent: "+event.getTitle());
-        reference.push().setValue(event);
         final String[] eventId = {""};
         reference.push().setValue(event, new DatabaseReference.CompletionListener() {
             @Override
@@ -148,14 +147,14 @@ public class EventsRepository {
     }
 
     public MutableLiveData<List<Event>> getCreatedEvents(String userId) {
-        if (createdList.size() == 0)
-            loadCreatedEvents(userId);
+        loadCreatedEvents(userId);
         createdEventsData.setValue(createdList);
         return createdEventsData;
     }
 
     private void loadCreatedEvents(String userId) {
         DatabaseReference reference = mDatabase.child("createdEvents").child(userId);
+        Log.d(TAG, "loadCreatedEvents: seraching created events for user: " + userId);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -194,8 +193,7 @@ public class EventsRepository {
     }
 
     public MutableLiveData<List<Event>> getJoinedEvents(String userId) {
-        if (joinedList.size() == 0)
-            loadJoinedEvents(userId);
+        loadJoinedEvents(userId);
         joinedEventsData.setValue(joinedList);
         return joinedEventsData;
     }
@@ -242,8 +240,7 @@ public class EventsRepository {
     }
 
     public MutableLiveData<List<Event>> getHistory(String userId) {
-        if (historyList.size() == 0)
-            loadHistory(userId);
+        loadHistory(userId);
         historyData.setValue(historyList);
         return historyData;
     }
