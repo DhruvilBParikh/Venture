@@ -33,4 +33,7 @@
     <string name="bio">Bio</string>
     <string name="default_bio">You haven\'t entered the bio yet. Set it by editing profile from the top.</string>
 
+    <!-- Event Fragement -->
+    <string name="organizedBy">Organized By</string>
+
 </resources>
