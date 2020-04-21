@@ -51,6 +51,8 @@ public class EventsRepository {
     private MutableLiveData<List<Event>> historyData = new MutableLiveData<>();
 
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
+    
+    private boolean joinedEventCheck;
 
 //    private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
 //    private ExploreMapFragmentViewModel mExloreMapFragmentViewModel;
@@ -219,7 +221,7 @@ public class EventsRepository {
                         newEvent.setId(snapshot.getKey());
                         newEvent.setTitle(snapshot.child("title").getValue().toString());
                         newEvent.setLocation(snapshot.child("location").getValue().toString());
-                        newEvent.setImage(snapshot.child("image").getValue().toString());
+//                        newEvent.setImage(snapshot.child("image").getValue().toString());
                         joinedList.add(newEvent);
                     }
                 }
@@ -322,5 +324,61 @@ public class EventsRepository {
             }
         });
 
+    }
+
+    public boolean hasJoinedEvent(final String userId, final String eventId) {
+        Log.d(TAG, "hasJoinedEvent: checking if user: " + userId + " has joined event: " + eventId);
+
+        mDatabase.child("joinedEvents").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(userId)) {
+                    Log.d(TAG, "onDataChange: user key exists");
+                    if(dataSnapshot.child(userId).hasChild(eventId)) {
+                        Log.d(TAG, "hasJoinedEvent: event key exists");
+                        joinedEventCheck = true;
+                    } else {
+                        Log.d(TAG, "hasJoinedEvent: event key does not exists");
+                        joinedEventCheck = false;
+                    }
+                } else {
+                    Log.d(TAG, "hasJoinedEvent: user key does not exists");
+                    joinedEventCheck = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return joinedEventCheck;
+
+//        if(mDatabase.child("joinedEvents").child(userId).equalTo(user).addChildEventListener()) {
+//            Log.d(TAG, "hasJoinedEvent: user key exists");
+//            Log.d(TAG, "hasJoinedEvent: " + mDatabase.child("joinedEvents").child(userId).child(eventId));
+//            if(mDatabase.child("joinedEvents").child(userId).child(eventId)!=null) {
+//                Log.d(TAG, "hasJoinedEvent: event key exists");
+//                return true;
+//            }
+//            Log.d(TAG, "hasJoinedEvent: event key does not exists");
+//            return false;
+//        } else {
+//            Log.d(TAG, "hasJoinedEvent: user key does not exists");
+//            return false;
+//        }
+    }
+
+    public void addJoinedEvent(String userId, String eventId, HashMap<String, String> eventObj) {
+        Log.d(TAG, "addJoinedEvent: adding to joined events");
+        Log.d(TAG, "addJoinedEvent: userid: " + userId);
+        Log.d(TAG, "addJoinedEvent: eventid: " + eventId);
+        Log.d(TAG, "addJoinedEvent: event: " + eventObj);
+        mDatabase.child("joinedEvents").child(userId).child(eventId).setValue(eventObj);
+    }
+
+    public void removeJoinedEvent(String userId, String eventId) {
+        Log.d(TAG, "onCheckedChanged: removing event from joined events: " + event + " for user: " + userId);
+        mDatabase.child("joinedEvents").child(userId).child(eventId).removeValue();
     }
 }

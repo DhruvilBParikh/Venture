@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModel;
 import com.example.venture.models.Event;
 import com.example.venture.repositories.EventsRepository;
 
+import java.util.HashMap;
+
 public class EventFragmentViewModel extends ViewModel {
 
     private static final String TAG = "EventFragmentViewModel";
@@ -53,6 +55,18 @@ public class EventFragmentViewModel extends ViewModel {
                 return null;
             }
         }.execute();
+    }
+
+    public boolean hasJoinedEvent(String userId, String eventid) {
+        return EventsRepository.getInstance().hasJoinedEvent(userId, eventid);
+    }
+
+    public void addJoinedEvent(String userId, String eventId,  HashMap<String, String> eventObj) {
+        EventsRepository.getInstance().addJoinedEvent(userId, eventId, eventObj);
+    }
+
+    public void removeJoinedEvent(String userId, String eventId) {
+        EventsRepository.getInstance().removeJoinedEvent(userId, eventId);
     }
 
 }
