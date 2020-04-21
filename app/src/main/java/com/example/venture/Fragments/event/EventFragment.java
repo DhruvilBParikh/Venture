@@ -158,7 +158,7 @@ public class EventFragment extends Fragment {
 
     public void setDefautlActionState(String userId, String eventId) {
         // get boolean value from joined events, true if user has joined this event
-        if (true) {
+        if (false) {
             actionButton.setChecked(true);
         } else {
             actionButton.setChecked(false);
