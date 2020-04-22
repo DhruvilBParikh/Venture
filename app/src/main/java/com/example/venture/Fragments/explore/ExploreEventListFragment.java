@@ -1,19 +1,17 @@
 package com.example.venture.Fragments.explore;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.venture.R;
 import com.example.venture.adapters.EventsRecyclerViewAdapter;
@@ -25,7 +23,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,20 +48,20 @@ public class ExploreEventListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         View view = inflater.inflate(R.layout.fragment_explore_event_list, container, false);
         mRecyclerView = view.findViewById(R.id.event_list_recyclerview);
         Log.d(TAG, "onCreateView: started.");
         initData();
         initRecyclerView();
-
-        autoSearch();
+        setSearchFragment();
         return view;
     }
 
+
+
     private void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview.");
-        mAdapter = new EventsRecyclerViewAdapter(getContext(), mExploreEventListFragmentViewModel.getEvents("allEvents","California").getValue());
+        mAdapter = new EventsRecyclerViewAdapter(getContext(), mExploreEventListFragmentViewModel.getResult().getValue());
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -72,18 +69,21 @@ public class ExploreEventListFragment extends Fragment {
     private void initData() {
 
         Log.d(TAG, "initData: preparing data.");
-        mExploreEventListFragmentViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
-        mExploreEventListFragmentViewModel.getEvents("allEvents","California").observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
+        mExploreEventListFragmentViewModel = new ViewModelProvider(getActivity()).get(ExploreEventListFragmentViewModel.class);
+        mExploreEventListFragmentViewModel.getEvents("allEvents","California");
+        mExploreEventListFragmentViewModel.getResult().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
             @Override
             public void onChanged(List<Event> events) {
-                Log.d(TAG,"--------all data observer"+ events.toString());
-                mAdapter.setmEvents(events);
-                mAdapter.notifyDataSetChanged();
+                if(events.size()>0) {
+                    Log.d(TAG, "--------all data observer" + events.toString());
+                    mAdapter.setmEvents(events);
+                    mAdapter.notifyDataSetChanged();
+                }
             }
         });
     }
 
-    private void autoSearch() {
+    private void setSearchFragment() {
 
         //AUTOCOMPLETE
         String apiKey = getString(R.string.google_maps_key);
@@ -91,25 +91,12 @@ public class ExploreEventListFragment extends Fragment {
             Places.initialize(getContext(), apiKey);
         }
 
-
         // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.NAME, Place.Field.LAT_LNG));
-
-
-        mExploreEventListFragmentViewModel.getResult().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
-            @Override
-            public void onChanged(List<Event> events) {
-                if(events.size()>0) {
-                    Log.d(TAG, "-----------Search observer" + events.get(0).getTitle());
-                    mAdapter.setmEvents(events);
-                    mAdapter.notifyDataSetChanged();
-                }
-            }
-        });
 
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -121,7 +108,7 @@ public class ExploreEventListFragment extends Fragment {
                 if (!place.getName().isEmpty()) {
                     String searchLocation = place.getName();
                     eventType = "searchEvents";
-                    mExploreEventListFragmentViewModel.getSearchEvents(eventType,searchLocation);
+                    mExploreEventListFragmentViewModel.getEvents(eventType,searchLocation);
                 }
             }
 

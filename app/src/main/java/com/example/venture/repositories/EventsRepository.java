@@ -4,6 +4,8 @@ package com.example.venture.repositories;
  * Singleton pattern
  */
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,11 +13,15 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.venture.models.Event;
 import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +42,8 @@ public class EventsRepository  {
 
     private MutableLiveData<List<Event>> searchEventsData = new MutableLiveData<>();
     private List<Event> searchList = new ArrayList<>();
+
+    private Bitmap bitmap;
 
 
 
@@ -80,12 +88,16 @@ public class EventsRepository  {
                     newEvent.setLocation(snapshot.child("location").getValue().toString());
                     newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
                     newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
+                    newEvent.setImage("rivers.jpg");
                     allList.add(newEvent);
 
                 }
                 Log.d("-------------------", allList.toString());
 
                 allEventsData.postValue(allList);
+                getFirebaseImage(allList);
+
+//                ExploreEventListFragmentViewModel.getInstance().postEvents(searchList);
             }
 
             @Override
@@ -128,12 +140,14 @@ public class EventsRepository  {
                         newEvent.setLocation(snapshot.child("location").getValue().toString());
                         newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
                         newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
+                        newEvent.setImage("rivers.jpg");
+
                         searchList.add(newEvent);
                     }
                 }
-                Log.d("-------------------", searchList.get(0).getTitle());
-                searchEventsData.postValue(searchList);
-                ExploreEventListFragmentViewModel.getInstance().postSearchEvents(searchList);
+                getFirebaseImage(searchList);
+
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -143,5 +157,72 @@ public class EventsRepository  {
 
         mreference.addListenerForSingleValueEvent(mSearchValueEventListener);
 
+
     }
+
+    private void getFirebaseImage(List<Event> eventList){
+        iterateThroughEvents(eventList, 0);
+//        Log.d(TAG,"========got all image values========");
+
+    }
+
+    private void iterateThroughEvents(final List<Event> eventList, final int position){
+        StorageReference mStorageRef;
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        final long ONE_MEGABYTE = 1024 * 1024;
+
+        if(position >=eventList.size()) {
+            finaldone(eventList);
+            return;
+        }
+
+        StorageReference imagesRef = mStorageRef.child(eventList.get(position).getImage());
+
+        imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                eventList.get(position).setImageBitmap(bitmap);
+                Log.d(TAG,"success-------------"+eventList.get(position).getImageBitmap());
+                iterateThroughEvents(eventList,position+1);
+
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
+    private void finaldone(List<Event> eventList){
+
+        Log.d(TAG,"========got all image values========"+eventList.toString());
+        ExploreEventListFragmentViewModel.getInstance().postEvents(eventList);
+
+    }
+//    private Bitmap getFirebaseImage(String imageName){
+//
+//        StorageReference mStorageRef;
+//        mStorageRef = FirebaseStorage.getInstance().getReference();
+//        StorageReference imagesRef = mStorageRef.child(imageName);
+//        Log.d(TAG, "ImageRef--- "+imagesRef.getName());
+//
+//        final long ONE_MEGABYTE = 1024 * 1024;
+//        imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+//            @Override
+//            public void onSuccess(byte[] bytes) {
+//                bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+//                Log.d(TAG,"success-------------");
+//
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                // Handle any errors
+//            }
+//        });
+//        return bitmap;
+//
+//    }
 }

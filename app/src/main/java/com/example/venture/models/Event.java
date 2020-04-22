@@ -1,10 +1,11 @@
 package com.example.venture.models;
 
-import com.google.android.gms.maps.model.LatLng;
+import android.graphics.Bitmap;
 
 public class Event {
 
     private String id;
+    private Bitmap imageBitmap;
     private String image;
     private String title;
     private String location;
@@ -14,6 +15,11 @@ public class Event {
     private String time;
     private String desc;
     private String organizer;
+
+
+//    public Event(Context current){
+//        this.context = current;
+//    }
 
 //    public Event(String id, String image, String title, String location, LatLng latLng, String date, String time, String desc, String organizer) {
 //        this.id = id;
@@ -27,7 +33,10 @@ public class Event {
 //        this.organizer = organizer;
 //    }
     public Event() {
+
+
         this.id = null;
+        this.imageBitmap = null;//BitmapFactory.decodeResource(getResources() ,R.drawable.sf_trail);
         this.image = null;
         this.title = null;
         this.location = null;
@@ -44,10 +53,13 @@ public class Event {
         return id;
     }
 
+    public Bitmap getImageBitmap() {
+        return imageBitmap;
+    }
+
     public String getImage() {
         return image;
     }
-
 
     public String getTitle() {
         return title;
@@ -87,6 +99,10 @@ public class Event {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public void setImageBitmap(Bitmap imageBitmap) {
+        this.imageBitmap = imageBitmap;
     }
 
     public void setTitle(String title) {

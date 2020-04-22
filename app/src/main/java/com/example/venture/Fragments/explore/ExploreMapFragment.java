@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -155,15 +156,15 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
 
     public void initData() {
         Log.d(TAG, "initData: initializing map data");
-//        mExploreEventListFragmentViewModel = ExploreEventListFragmentViewModel.getInstance();
-//        mExploreEventListFragmentViewModel.getEvents().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
-//            @Override
-//            public void onChanged(List<Event> events) {
-//                Log.d(TAG, "onChanged: " + events.toString());
-//                mMap.clear();
-//                setMarkers(events);
-//            }
-//        });
+        mExploreEventListFragmentViewModel = new ViewModelProvider(this).get(ExploreEventListFragmentViewModel.class);
+        mExploreEventListFragmentViewModel.getResult().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
+            @Override
+            public void onChanged(List<Event> events) {
+                Log.d(TAG, "onChanged: " + events.toString());
+                mMap.clear();
+                setMarkers(events);
+            }
+        });
 
     }
 
@@ -198,6 +199,7 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
                     .snippet(location);
             Marker marker = mMap.addMarker(options);
             marker.setTag(id);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
         }
     }
     public void toastNotification(String message) {

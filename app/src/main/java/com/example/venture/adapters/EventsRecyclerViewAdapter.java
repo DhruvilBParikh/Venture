@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.venture.Fragments.explore.ExploreEventListFragment;
 import com.example.venture.R;
 import com.example.venture.models.Event;
 
@@ -27,6 +26,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     private List<Event> mEvents;
     private Context mContext;
 
+//
     public EventsRecyclerViewAdapter(Context mContext, List<Event> eventList) {
         this.mEvents = eventList;
         this.mContext = mContext;
@@ -49,9 +49,16 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     public void onBindViewHolder(ViewHolder holder, final int position) {
         Log.d(TAG, "onBindViewHolder: called.");
 
-//        Log.d(TAG, mEvents.get(position).getImage());
+        Log.d(TAG, "-------image in recycler view-------"+mEvents.get(position).getTitle());
 
-        holder.event_image.setImageResource(R.drawable.sf_trail);
+        if(mEvents.get(position).getImageBitmap()==null) {
+            Log.d(TAG, "-----Its Null");
+            holder.event_image.setImageResource(R.drawable.default_image);
+        }
+        else {
+            Log.d(TAG, mEvents.get(position).getImageBitmap().toString());
+            holder.event_image.setImageBitmap(mEvents.get(position).getImageBitmap());
+        }
 
         holder.event_name.setText(mEvents.get(position).getTitle());
         holder.event_location.setText(mEvents.get(position).getLocation());
@@ -70,6 +77,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
 
     @Override
     public int getItemCount() {
+        if(mEvents==null)
+            return 0;
         return mEvents.size();
     }
 
