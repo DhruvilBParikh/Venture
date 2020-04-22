@@ -15,7 +15,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.venture.models.Event;
 import com.example.venture.viewmodels.event.EventFragmentViewModel;
 import com.example.venture.viewmodels.explore.ExploreEventListFragmentViewModel;
-import com.example.venture.viewmodels.explore.ExploreMapFragmentViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -55,7 +54,6 @@ public class EventsRepository  {
     private static DatabaseReference mDatabase;
     private static DatabaseReference mreference;
     private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
-    private ExploreMapFragmentViewModel mExloreMapFragmentViewModel;
     private EventFragmentViewModel eventFragmentViewModel;
 
     //Lists
@@ -144,7 +142,8 @@ public class EventsRepository  {
     private void loadAllEvents() {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mreference = mDatabase.child("trialevents");
+//        mreference = mDatabase.child("trialevents");
+        mreference = mDatabase.child("events");
         mreference.addValueEventListener(mAllValueEventListener);
 
     }
@@ -152,7 +151,8 @@ public class EventsRepository  {
     private void loadSearchEvents(final String location) {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mreference = mDatabase.child("trialevents");
+//        mreference = mDatabase.child("trialevents");
+        mreference = mDatabase.child("events");
         mSearchValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -394,7 +394,7 @@ public class EventsRepository  {
                         newEvent.setId(snapshot.getKey());
                         newEvent.setTitle(snapshot.child("title").getValue().toString());
                         newEvent.setLocation(snapshot.child("location").getValue().toString());
-                        newEvent.setImage(snapshot.child("image").getValue().toString());
+//                        newEvent.setImage(snapshot.child("image").getValue().toString());
                         historyList.add(newEvent);
                     }
                 }

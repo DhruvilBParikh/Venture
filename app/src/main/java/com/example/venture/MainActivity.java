@@ -1,33 +1,28 @@
 package com.example.venture;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.venture.Fragments.addevent.AddEventFragment;
 import com.example.venture.Fragments.event.EventFragment;
 import com.example.venture.Fragments.explore.ExploreFragment;
 import com.example.venture.Fragments.history.HistoryFragment;
+import com.example.venture.Fragments.login.LoginFragment;
 import com.example.venture.Fragments.loginSignup.LoginSignupFragment;
 import com.example.venture.Fragments.plan.PlanFragment;
-import com.example.venture.Fragments.login.LoginFragment;
-import com.example.venture.Fragments.signup.SignupFragment;
 import com.example.venture.Fragments.profile.ProfileFragment;
+import com.example.venture.Fragments.signup.SignupFragment;
 import com.example.venture.models.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -106,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         mPreferencesEditor.remove("userId");
         mPreferencesEditor.remove("email");
         mPreferencesEditor.remove("name");
+        mPreferencesEditor.remove("bio");
         mPreferencesEditor.commit();
         mAuth.signOut();
         isLoggedIn = false;
@@ -165,13 +161,6 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public void openEventFragment(String eventId, String tag) {
-        Log.d(TAG, "openEventFragment: opening event with id: " + eventId);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, new EventFragment(eventId), tag);
-//        transaction.addToBackStack(null);
-        transaction.commit();
-    }
 
 //    public void changeAppBar() {
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
