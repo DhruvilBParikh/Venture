@@ -91,6 +91,7 @@ public class ExploreFragment extends Fragment {
         ExploreSectionsPageAdapter adapter = new ExploreSectionsPageAdapter(getChildFragmentManager());
         adapter.addFragment(new ExploreEventListFragment(), "Events");
         adapter.addFragment(new ExploreMapFragment(), "Map");
+
         viewPager.setAdapter(adapter);
     }
 

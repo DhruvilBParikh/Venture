@@ -8,6 +8,7 @@ import com.example.venture.models.User;
 import com.example.venture.repositories.UsersRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UsersViewModel extends ViewModel {
 

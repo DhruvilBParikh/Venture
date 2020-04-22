@@ -54,13 +54,20 @@ public class SignupFragment extends Fragment {
         Log.d(TAG, "onCreateView: next fragment to open: " + getTag());
         view = inflater.inflate(R.layout.fragment_signup, container, false);
 
+        //Set widgets
         signupButton = view.findViewById(R.id.signup_button);
         nameText = view.findViewById(R.id.nameText);
         emailText = view.findViewById(R.id.emailText);
         passwordText = view.findViewById(R.id.passwordText);
-        mAuth = FirebaseAuth.getInstance();
-        usersViewModel = new ViewModelProvider(requireActivity()).get(UsersViewModel.class);
 
+        //firebase setup
+        mAuth = FirebaseAuth.getInstance();
+
+        //mvvm viewmodel
+        usersViewModel = new ViewModelProvider(this).get(UsersViewModel.class);
+        //usersViewModel = new ViewModelProvider(requireActivity()).get(UsersViewModel.class);
+
+        //Signup onClick
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,8 +82,6 @@ public class SignupFragment extends Fragment {
                     String password = passwordText.getText().toString();
                     String name = nameText.getText().toString();
                     createAccount(name, email, password);
-
-
                 } else {
                     if(!nameCheck) {
                         Log.d(TAG, "onClick: invalid name message");
@@ -99,20 +104,7 @@ public class SignupFragment extends Fragment {
                 }
             }
         });
-
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null){
-            Log.d(TAG, "onStart: successfully signed in");
-            Toast.makeText(getActivity().getApplicationContext(), "Successfully Signed In with "+ currentUser.getEmail(), Toast.LENGTH_LONG).show();
-        }
-//        updateUI(currentUser);
     }
 
     public void createAccount(final String name, final String email, String password) {
@@ -131,7 +123,7 @@ public class SignupFragment extends Fragment {
                                 user.setName(name);
                                 usersViewModel.addUser(user);
 
-                                ((MainActivity) getActivity()).logsIn(getTag(), currentUser);
+                                ((MainActivity) getActivity()).logsIn(getTag(), user);
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -139,8 +131,6 @@ public class SignupFragment extends Fragment {
                                         Toast.LENGTH_SHORT).show();
 
                             }
-
-
                         }
                     });
     }

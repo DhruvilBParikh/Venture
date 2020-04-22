@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 public class UsersRepository {
 
-    private static final String TAG = "EventRepository";
+    private static final String TAG = "UsersRepository";
 
     static UsersRepository instance;
     private ArrayList<User> usersList =  new ArrayList<>();
@@ -49,6 +49,7 @@ public class UsersRepository {
                 if(userExists) {
                     User user = dataSnapshot.child(userId).getValue(User.class);
                     Log.d(TAG, "onDataChange: dataSnapshot:" + dataSnapshot.child(userId).getValue());
+                    user.setId(userId);
                     userLiveData.postValue(user);
 //                    user.setName(dataSnapshot.);
                 } else {
@@ -105,24 +106,22 @@ public class UsersRepository {
         String userId = user.getId();
         map.put("name", user.getName());
         map.put("email", user.getEmail());
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onDataChange: database "+ dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                Log.d(TAG, "onCancelled: "+ databaseError.toException());
-            }
-        });
+//        reference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                Log.d(TAG, "onDataChange: database "+ dataSnapshot);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                Log.d(TAG, "onCancelled: "+ databaseError.toException());
+//            }
+//        });
         Log.d(TAG, "addUser: map"+ map.values());
         Log.d(TAG, "addUser: database reference "+ reference.child("1").toString());
         reference.child(userId).setValue(map);
-//        reference.push().setValue(new User("title9", "The Turing Machine11"));
 
     }
-
 
 }

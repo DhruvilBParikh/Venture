@@ -13,30 +13,16 @@ public class Event {
     private double longitude;
     private String date;
     private String time;
-    private String desc;
+    private String details;
     private String organizer;
+    private String organizerId;
+    private String city;
+    private String state;
+    private String desc;
 
-
-//    public Event(Context current){
-//        this.context = current;
-//    }
-
-//    public Event(String id, String image, String title, String location, LatLng latLng, String date, String time, String desc, String organizer) {
-//        this.id = id;
-//        this.image = image;
-//        this.title = title;
-//        this.location = location;
-//        this.latLng = latLng;
-//        this.date = date;
-//        this.time = time;
-//        this.desc = desc;
-//        this.organizer = organizer;
-//    }
     public Event() {
-
-
         this.id = null;
-        this.imageBitmap = null;//BitmapFactory.decodeResource(getResources() ,R.drawable.sf_trail);
+        this.imageBitmap = null;
         this.image = null;
         this.title = null;
         this.location = null;
@@ -46,8 +32,9 @@ public class Event {
         this.time = null;
         this.desc = null;
         this.organizer = null;
-
     }
+
+
 
     public String getId() {
         return id;
@@ -85,8 +72,8 @@ public class Event {
         return time;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDetails() {
+        return details;
     }
 
     public String getOrganizer() {
@@ -121,6 +108,7 @@ public class Event {
         this.longitude = longitude;
     }
 
+
     public void setDate(String date) {
         this.date = date;
     }
@@ -129,11 +117,43 @@ public class Event {
         this.time = time;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDetails(String details) {
+        this.details = details;
     }
 
     public void setOrganizer(String organizer) {
         this.organizer = organizer;
+    }
+
+    public String getOrganizerId() {
+        return organizerId;
+    }
+
+    public void setOrganizerId(String organizerId) {
+        this.organizerId = organizerId;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

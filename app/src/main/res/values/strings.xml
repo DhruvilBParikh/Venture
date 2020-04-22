@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Venture_v0</string>
+    <string name="app_name">Venture</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
@@ -27,4 +27,23 @@
     <string name="geolocateError">Unable to get current location</string>
     <string name="geolocateSuccess">Location enabled</string>
     <string name="permissionReq">Please grant permission to use your location</string>
+    <string name="cover_photo">Cover Photo</string>
+    <string name="profile_photo">Profile Photo</string>
+    <string name="name">Name</string>
+    <string name="bio">Bio</string>
+    <string name="default_bio">You haven\'t entered the bio yet. Set it by editing profile from the top.</string>
+
+    <!-- ExploreListFragment -->
+    <string name="noEventsNearby">There are no events nearby!</string>
+
+    <!-- PlanFragment -->
+    <string name="noEventsCreated">You have not created any events yet</string>
+    <string name="noEventsJoined">You have not joined any events</string>
+
+    <!-- HistoryFragment -->
+    <string name="noEventsHistory">You did not participate in any events in the past</string>
+
+    <!-- EventFragment -->
+    <string name="organizedBy">Organized By</string>
+
 </resources>

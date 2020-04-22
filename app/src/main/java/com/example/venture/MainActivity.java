@@ -1,13 +1,18 @@
 package com.example.venture;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toolbar;
 
 import com.example.venture.Fragments.addevent.AddEventFragment;
 import com.example.venture.Fragments.event.EventFragment;
@@ -18,6 +23,7 @@ import com.example.venture.Fragments.plan.PlanFragment;
 import com.example.venture.Fragments.login.LoginFragment;
 import com.example.venture.Fragments.signup.SignupFragment;
 import com.example.venture.Fragments.profile.ProfileFragment;
+import com.example.venture.models.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,12 +43,13 @@ public class MainActivity extends AppCompatActivity {
     private Fragment profileFragment;
     private Fragment loginSignupFragment;
     private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
-
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mPreferencesEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //fragments
         exploreFragment = new ExploreFragment();
         planFragment = new PlanFragment();
         addEventFragment = new AddEventFragment();
@@ -50,8 +57,14 @@ public class MainActivity extends AppCompatActivity {
         profileFragment = new ProfileFragment();
         loginSignupFragment = new LoginSignupFragment();
 
+        //auth
         mAuth =FirebaseAuth.getInstance();
-        currentUser = mAuth.getCurrentUser();
+
+        //preferences
+        mPreferences = getPreferences(Context.MODE_PRIVATE);
+        mPreferencesEditor = mPreferences.edit();
+
+        //check session
         isLoggedIn = checkSession();
         Log.d(TAG, "onCreate: Loggedin "+isLoggedIn);
         setContentView(R.layout.activity_main);
@@ -59,21 +72,49 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         bottomNavigation.setSelectedItemId(R.id.item_explore);
-//        openFragment("EXPLORE");
     }
 
-    public FirebaseUser getCurrentUser() {
-        return currentUser;
+    public boolean checkSession() {
+        Log.d(TAG, "isLoggedIn: checking user session ");
+
+        if(mPreferences.getString("userId","") == "") {
+            return false;
+        } else {
+            Log.d(TAG, "checkSession: userId"+mPreferences.getString("userId",""));
+            Log.d(TAG, "checkSession: email"+mPreferences.getString("email",""));
+            Log.d(TAG, "checkSession: name"+mPreferences.getString("name",""));
+            Log.d(TAG, "checkSession: bio"+mPreferences.getString("bio",""));
+            return true;
+        }
     }
 
-    public void setCurrentUser(FirebaseUser user) {
-        currentUser = user;
+    public void logsIn(String tag, User user) {
+        Log.d(TAG, "logsIn: user logs in");
+        mPreferencesEditor.putString("userId", user.getId());
+        mPreferencesEditor.putString("email", user.getEmail());
+        mPreferencesEditor.putString("name", user.getName());
+        mPreferencesEditor.putString("bio", user.getBio());
+        mPreferencesEditor.commit();
+        isLoggedIn = true;
+        openFragment(tag);
+    }
+
+    public void logsOut() {
+        Log.d(TAG, "logsOut: user logged out");
+
+//        handle log out code
+        mPreferencesEditor.remove("userId");
+        mPreferencesEditor.remove("email");
+        mPreferencesEditor.remove("name");
+        mPreferencesEditor.commit();
+        mAuth.signOut();
+        isLoggedIn = false;
+        bottomNavigation.setSelectedItemId(R.id.item_explore);
     }
 
     public void openFragment(String tag) {
         Log.d(TAG, "openFragment: " + tag);
         Boolean loginPrompt = !(tag.equals("EXPLORE") || isLoggedIn);
-
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -124,37 +165,21 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    public boolean checkSession() {
-        Log.d(TAG, "isLoggedIn: checking user session "+ currentUser);
-
-        if(currentUser!=null) {
-            return true;
-        } else {
-            return false;
-        }
+    public void openEventFragment(String eventId, String tag) {
+        Log.d(TAG, "openEventFragment: opening event with id: " + eventId);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, new EventFragment(eventId), tag);
+//        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
-    public void logsIn(String tag, FirebaseUser user) {
-        Log.d(TAG, "logsIn: user logs in");
+//    public void changeAppBar() {
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//    }
 
-        currentUser = user;
-        isLoggedIn = true;
-
-        openFragment(tag);
-    }
-
-    public void logsOut() {
-        Log.d(TAG, "logsOut: user logged out");
-
-//        handle log out code
-        mAuth.signOut();
-        isLoggedIn = false;
-
-        bottomNavigation.setSelectedItemId(R.id.item_explore);
-//        openFragment("EXPLORE");
-
-
-    }
+//    public void hideBottomNavigationBar() {
+//        bottomNavigation.setVisibility(View.GONE);
+//    }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -185,5 +210,12 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
             };
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        onBackPressed();
+        return true;
+    }
 
 }

@@ -30,10 +30,6 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
         mrepo.getEvents(eventType, location);
     }
 
-//    public void getSearchEvents(String eventType, String location) {
-//        mrepo.getEvents(eventType, location).getValue();
-//    }
-
     public void postEvents(List<Event> eventType) {
         Log.d(TAG,"inside postevents result--------"+eventType.toString() );
         resultEvents.setValue((eventType));
@@ -43,6 +39,42 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
     public LiveData<List<Event>> getResult() {
         Log.d(TAG,"inside get result--------"+resultEvents.getValue() );
         return resultEvents;
+    }
+
+    public void addEvent(Event event, String userId) {
+        EventsRepository.getInstance().addEvent(event, userId);
+    }
+    
+//    public void addEvents(final List<Event> addevent) {
+//        Log.d("---currentEvent1: ---", addevent.toString());
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected void onPostExecute(Void aVoid) {
+//                super.onPostExecute(aVoid);
+//
+//                Log.d("---currentEvent: ---", addevent.toString());
+//                mEvents.postValue(addevent);
+//                Log.d("---end: ---", "here");
+//
+//            }
+//
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//                return null;
+//            }
+//        }.execute();
+//    }
+
+    public LiveData<List<Event>> getCreatedEvents(String userId) {
+        return EventsRepository.getInstance().getCreatedEvents(userId);
+    }
+
+    public LiveData<List<Event>> getJoinedEvents(String userId) {
+        return EventsRepository.getInstance().getJoinedEvents(userId);
+    }
+
+    public LiveData<List<Event>> getHistory(String userId) {
+        return EventsRepository.getInstance().getHistory(userId);
     }
 
 }

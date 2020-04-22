@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.history.HistoryFragment">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/history_list_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="History Fragment" />
+        android:layout_height="wrap_content"
+        android:id="@+id/noEvents"
+        android:text="@string/noEventsHistory"
+        android:padding="16dp"
+        android:gravity="center_horizontal"
+        android:visibility="gone"/>
 
-</FrameLayout>
+</RelativeLayout>

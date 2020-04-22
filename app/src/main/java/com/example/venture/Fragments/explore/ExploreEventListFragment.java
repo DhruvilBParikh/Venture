@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -38,9 +39,12 @@ public class ExploreEventListFragment extends Fragment {
     private static final String TAG = "ExploreEventFragment";
     private String eventType = "allEvents";
     private ExploreEventListFragmentViewModel mExploreEventListFragmentViewModel;
-    private EventsRecyclerViewAdapter mAdapter;
-    private RecyclerView mRecyclerView;
     MutableLiveData<List<Event>> searchResult;
+
+    //vars
+    private RecyclerView mRecyclerView;
+    private TextView noEventsText;
+    private EventsRecyclerViewAdapter mAdapter;
 
 
 
@@ -50,6 +54,7 @@ public class ExploreEventListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_explore_event_list, container, false);
         mRecyclerView = view.findViewById(R.id.event_list_recyclerview);
+        noEventsText = view.findViewById(R.id.noEvents);
         Log.d(TAG, "onCreateView: started.");
         initData();
         initRecyclerView();
@@ -74,8 +79,12 @@ public class ExploreEventListFragment extends Fragment {
         mExploreEventListFragmentViewModel.getResult().observe(getViewLifecycleOwner(), new Observer<List<Event>>() {
             @Override
             public void onChanged(List<Event> events) {
-                if(events.size()>0) {
-                    Log.d(TAG, "--------all data observer" + events.toString());
+                Log.d(TAG, "--------all data observer" + events.toString());
+                if(events.isEmpty()) {
+                    Log.d(TAG, "onChanged: nearby events is empty");
+                    noEventsText.setVisibility(View.VISIBLE);
+                } else {
+                    noEventsText.setVisibility(View.GONE);
                     mAdapter.setmEvents(events);
                     mAdapter.notifyDataSetChanged();
                 }
