@@ -30,4 +30,8 @@ public class UsersViewModel extends ViewModel {
     public void addUser(User user) {
         UsersRepository.getInstance().addUser(user);
     }
+
+    public void editUser(User user) {
+        UsersRepository.getInstance().editUser(user);
+    }
 }

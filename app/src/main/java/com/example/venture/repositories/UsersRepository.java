@@ -124,4 +124,18 @@ public class UsersRepository {
 
     }
 
+    public void editUser(User user) {
+        Log.d(TAG, "editUser: editing user");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users");
+        HashMap<String, String> map = new HashMap<>();
+        String userId = user.getId();
+        map.put("name", user.getName());
+        map.put("email", user.getEmail());
+        if(!user.getBio().equals(""))
+            map.put("bio", user.getBio());
+        if(!user.getProfilePic().equals(""))
+            map.put("profilePic", user.getProfilePic());
+        reference.child(userId).setValue(map);
+    }
+
 }

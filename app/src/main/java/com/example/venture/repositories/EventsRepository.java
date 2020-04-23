@@ -67,24 +67,21 @@ public class EventsRepository {
         return instance;
     }
 
-    public void addEvent(final Event event, final String userId) {
+    public void addEvent(final Event event, final String userId, final String eventId) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
         Log.d(TAG, "addEvent: "+event.getTitle());
-        final String[] eventId = {""};
-        reference.push().setValue(event, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                eventId[0] = databaseReference.getKey();
-                Log.d(TAG, "addEvent: event id is::::" + eventId[0]);
-                HashMap<String, String> eventMap = new HashMap<>();
-                eventMap.put("title", event.getTitle());
-                eventMap.put("location", event.getLocation());
-                eventMap.put("date", event.getDate());
-                eventMap.put("time", event.getTime());
-                eventMap.put("image", event.getImage());
-                addCreatedEvent(eventMap, eventId[0],userId);
-            }
-        });
+//        final String[] eventId = {""};
+        reference.child(eventId).setValue(event);
+//                eventId[0] = databaseReference.getKey();
+        Log.d(TAG, "addEvent: event id is::::" + eventId);
+        HashMap<String, String> eventMap = new HashMap<>();
+        eventMap.put("title", event.getTitle());
+        eventMap.put("location", event.getLocation());
+        eventMap.put("date", event.getDate());
+        eventMap.put("time", event.getTime());
+        eventMap.put("image", event.getImage());
+        addCreatedEvent(eventMap, eventId,userId);
+
 
     }
 

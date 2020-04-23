@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.profile.ProfileFragment">
-
+    tools:context=".Fragments.profile.EditProfileFragment">
 
     <ImageView
-        android:id="@+id/profileCover"
+        android:id="@+id/editProfileCover"
         android:contentDescription="@string/cover_photo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
-        android:id="@+id/profileImage"
+        android:id="@+id/editProfileImage"
         android:contentDescription="@string/profile_photo"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -29,6 +29,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/uploadProfileImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="5dp"
+        android:text="Upload New Profile Picture"
+        android:background="@android:color/white"
+        android:textSize="10sp" />
 
     <LinearLayout
         android:id="@+id/profileLinearLayout"
@@ -41,35 +53,44 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileImage">
+        app:layout_constraintTop_toBottomOf="@+id/uploadProfileImageButton">
 
         <TextView
-            android:id="@+id/userNameTitle"
+            android:id="@+id/editUserNameTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/name"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/userName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/editUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/edit_name"/>
 
         <TextView
-            android:id="@+id/bioTitle"
+            android:id="@+id/editBioTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/bio"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/bioDescription"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/editBioDescription"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/default_bio" />
+            android:hint="@string/edit_bio" />
 
     </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/editSaveButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/save_changes_button"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

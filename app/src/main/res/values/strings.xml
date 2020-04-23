@@ -45,5 +45,18 @@
 
     <!-- EventFragment -->
     <string name="organizedBy">Organized By</string>
+    <string name="dialog_select_photo">SelectPhotoDialog</string>
+    <string name="edit_bio">Write your bio here...</string>
+    <string name="save_changes_button">Save Changes</string>
+    <string name="edit_name">Write your Full Name</string>
+    <string name="add_event_photo">Add Photo</string>
+    <string name="event_photo">Event Photo</string>
+    <string name="add_meeting_point">Add Meeting Point</string>
+    <string name="change_photo">Change Photo</string>
+    <string name="add_event_button">Add Event</string>
+    <string name="event_time_title">Event Time</string>
+    <string name="event_date_title">Event Date</string>
+    <string name="event_description_title">Event Description</string>
+    <string name="event_title">Event Title</string>
 
 </resources>

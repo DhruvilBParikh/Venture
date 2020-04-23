@@ -1,6 +1,5 @@
 package com.example.venture.Fragments.profile;
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,8 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.example.venture.MainActivity;
 import com.example.venture.R;
 import com.example.venture.viewmodels.explore.UsersViewModel;
@@ -26,7 +27,9 @@ import com.example.venture.viewmodels.explore.UsersViewModel;
 public class ProfileFragment extends Fragment {
 
     private static final String TAG = "ProfileFragment";
-    private ImageButton profileImage;
+    private static final int defaultImage = R.drawable.profile_pic;
+
+    private ImageView profileImage;
     private TextView userName;
     private TextView bioDescription;
     private UsersViewModel usersViewModel;
@@ -49,20 +52,21 @@ public class ProfileFragment extends Fragment {
 
         String name = mPreferences.getString("name", "");
         String bio = mPreferences.getString("bio", "");
+        String profilePic = mPreferences.getString("profilePic", "");
         userName.setText(name);
         if(!bio.equals(""))
             bioDescription.setText(bio);
-
-        profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        Glide.with(this)
+                .load(profilePic) // image url
+                .placeholder(defaultImage) // any placeholder to load at start
+                .error(defaultImage)  // any image in case of error
+                .override(100, 100) // resizing
+                .centerCrop()
+                .into(profileImage);
         setHasOptionsMenu(true);
+
         return view;
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -78,8 +82,7 @@ public class ProfileFragment extends Fragment {
                 return true;
             }
             case R.id.edit_profile: {
-
-//                openFragment("editProfileFragment");
+                ((MainActivity)getActivity()).openEditProfileFragment("PROFILE");
             }
         }
         return super.onOptionsItemSelected(item);

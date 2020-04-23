@@ -8,7 +8,18 @@ public class User {
     private String name;
     private String email;
     private String bio;
+    private String profilePic;
     private LatLng lastLocation;
+
+
+    public User() {
+        id="";
+        name="";
+        email="";
+        bio="";
+        profilePic="";
+        lastLocation=null;
+    }
 
     public String getId() {
         return id;
@@ -40,6 +51,14 @@ public class User {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
     }
 
     public LatLng getLastLocation() {

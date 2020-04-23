@@ -3,11 +3,15 @@ package com.example.venture;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -21,6 +25,7 @@ import com.example.venture.Fragments.history.HistoryFragment;
 import com.example.venture.Fragments.loginSignup.LoginSignupFragment;
 import com.example.venture.Fragments.plan.PlanFragment;
 import com.example.venture.Fragments.login.LoginFragment;
+import com.example.venture.Fragments.profile.EditProfileFragment;
 import com.example.venture.Fragments.signup.SignupFragment;
 import com.example.venture.Fragments.profile.ProfileFragment;
 import com.example.venture.models.User;
@@ -49,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
         //fragments
         exploreFragment = new ExploreFragment();
         planFragment = new PlanFragment();
@@ -67,11 +74,12 @@ public class MainActivity extends AppCompatActivity {
         //check session
         isLoggedIn = checkSession();
         Log.d(TAG, "onCreate: Loggedin "+isLoggedIn);
-        setContentView(R.layout.activity_main);
+
 
         bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         bottomNavigation.setSelectedItemId(R.id.item_explore);
+
     }
 
     public boolean checkSession() {
@@ -90,13 +98,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void logsIn(String tag, User user) {
         Log.d(TAG, "logsIn: user logs in");
+        setPreferences(user);
+        isLoggedIn = true;
+        openFragment(tag);
+    }
+
+    public void setPreferences(User user) {
         mPreferencesEditor.putString("userId", user.getId());
         mPreferencesEditor.putString("email", user.getEmail());
         mPreferencesEditor.putString("name", user.getName());
         mPreferencesEditor.putString("bio", user.getBio());
+        mPreferencesEditor.putString("profilePic", user.getProfilePic());
         mPreferencesEditor.commit();
-        isLoggedIn = true;
-        openFragment(tag);
     }
 
     public void logsOut() {
@@ -106,6 +119,9 @@ public class MainActivity extends AppCompatActivity {
         mPreferencesEditor.remove("userId");
         mPreferencesEditor.remove("email");
         mPreferencesEditor.remove("name");
+        mPreferencesEditor.remove("profilePic");
+        mPreferencesEditor.remove("bio");
+
         mPreferencesEditor.commit();
         mAuth.signOut();
         isLoggedIn = false;
@@ -163,6 +179,14 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "openEventFragment: opening event with id: " + eventId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, new EventFragment(eventId), tag);
+//        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    public void openEditProfileFragment(String tag) {
+        Log.d(TAG, "openEditProfile: opening an edit profile fragment "+mPreferences.getString("userId",""));
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, new EditProfileFragment(), tag);
 //        transaction.addToBackStack(null);
         transaction.commit();
     }

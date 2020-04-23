@@ -9,13 +9,13 @@
         android:layout_height="wrap_content">
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/labelTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Event Title"
+            android:hint="@string/event_title"
             android:layout_margin="5dp"
             android:padding="5dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -31,7 +31,7 @@
             android:id="@+id/labelDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Event Description"
+            android:hint="@string/event_description_title"
             android:layout_margin="5dp"
             android:padding="5dp"
             android:gravity="start"
@@ -50,13 +50,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_margin="5dp"
-            android:weightSum="100">
+            android:weightSum="100"
+            android:baselineAligned="false">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/labelDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Event Date"
+                android:hint="@string/event_date_title"
                 android:padding="5dp"
                 android:gravity="start"
                 android:layout_weight="50"
@@ -76,7 +77,7 @@
                 android:id="@+id/labelTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Event Time"
+                android:hint="@string/event_time_title"
                 android:padding="5dp"
                 android:gravity="start"
                 android:layout_weight="50"
@@ -98,16 +99,38 @@
         <fragment android:id="@+id/autocomplete_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="10dp"
             android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
             />
+
+        <ImageView
+            android:id="@+id/eventPhotoDisplay"
+            android:contentDescription="@string/event_photo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:src="@drawable/profile_pic"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/addEventPhotoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:text="@string/add_event_photo"
+            android:clickable="true"
+            android:focusable="true"
+            android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonAddEvent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Add Event"
+            android:text="@string/add_event_button"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
 
     </LinearLayout>
