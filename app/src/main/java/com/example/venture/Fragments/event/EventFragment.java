@@ -2,11 +2,8 @@ package com.example.venture.Fragments.event;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,14 +13,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+
 import com.example.venture.MainActivity;
 import com.example.venture.R;
 import com.example.venture.models.Event;
 import com.example.venture.viewmodels.event.EventFragmentViewModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -115,12 +118,30 @@ public class EventFragment extends Fragment {
                 Log.d(TAG, "onChanged: event fetched: " + event);
                 if(event!=null) {
                     Log.d(TAG, "onChanged: event found with title: " + event.getTitle());
+
+                    /////////////////IMAGE////////////////
+                    StorageReference mStorageRef;
+                    mStorageRef = FirebaseStorage.getInstance().getReference();
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    StorageReference imagesRef = mStorageRef.child(event.getImage());
+
+                    imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            eventImage.setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
+                    //////////////////////////////////////
                     organizerId = event.getOrganizerId();
                     title = event.getTitle();
                     location = event.getLocation();
                     date = event.getDate();
                     time = event.getTime();
-//                  set image from event.getImage()
 
                     titleText.setText(event.getTitle());
                     locationText.setText(event.getLocation());

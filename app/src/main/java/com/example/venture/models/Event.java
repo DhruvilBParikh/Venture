@@ -1,16 +1,16 @@
 package com.example.venture.models;
 
-import com.google.android.gms.maps.model.LatLng;
+import android.graphics.Bitmap;
 
 public class Event {
 
     private String id;
+    private Bitmap imageBitmap;
     private String image;
     private String title;
     private String location;
     private double latitude;
     private double longitude;
-//    private LatLng latLng;
     private String date;
     private String time;
     private String details;
@@ -18,65 +18,35 @@ public class Event {
     private String organizerId;
     private String city;
     private String state;
+    private String desc;
 
-
-//    private String desc;
-    //Dhruvil's Change
-     public Event(){
-
-     }
-    // public Event(String id, String image, String title, String location, String date, String time, String details, String organizer) {
-    //     this.id = id;
-    //     this.image = image;
-    //     this.title = title;
-    //     this.location = location;
-    //     this.date = date;
-    //     this.time = time;
-    //     this.details = details;
-    //     this.organizer = organizer;
-
-
-    //Devanshi's Change
-//    public Event(String id, String image, String title, String location, LatLng latLng, String date, String time, String desc, String organizer) {
-//        this.id = id;
-//        this.image = image;
-//        this.title = title;
-//        this.location = location;
-//        this.latLng = latLng;
-//        this.date = date;
-//        this.time = time;
-//        this.desc = desc;
-//        this.organizer = organizer;
-//    }
-//    public Event() {
-//        this.id = null;
-//        this.image = null;
-//        this.title = null;
-//        this.location = null;
-//        this.latLng = null;
-//        this.date = null;
-//        this.time = null;
-//        this.desc = null;
-//        this.organizer = null;
-//
-//    }
-
-    public double getLatitude() {
-        return latitude;
+    public Event() {
+        this.id = null;
+        this.imageBitmap = null;
+        this.image = null;
+        this.title = null;
+        this.location = null;
+        this.latitude = 0;
+        this.longitude = 0;
+        this.date = null;
+        this.time = null;
+        this.desc = null;
+        this.organizer = null;
     }
 
-    public double getLongitude() {
-        return longitude;
-    }
+
 
     public String getId() {
         return id;
     }
 
+    public Bitmap getImageBitmap() {
+        return imageBitmap;
+    }
+
     public String getImage() {
         return image;
     }
-
 
     public String getTitle() {
         return title;
@@ -86,9 +56,13 @@ public class Event {
         return location;
     }
 
-//    public LatLng getLatLng() {
-//        return latLng;
-//    }
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
 
     public String getDate() {
         return date;
@@ -114,6 +88,10 @@ public class Event {
         this.image = image;
     }
 
+    public void setImageBitmap(Bitmap imageBitmap) {
+        this.imageBitmap = imageBitmap;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -130,9 +108,6 @@ public class Event {
         this.longitude = longitude;
     }
 
-//    public void setLatLng(LatLng latLng) {
-//        this.latLng = latLng;
-//    }
 
     public void setDate(String date) {
         this.date = date;
@@ -172,5 +147,13 @@ public class Event {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

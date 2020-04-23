@@ -3,9 +3,6 @@ package com.example.venture.Fragments.profile;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.example.venture.MainActivity;
 import com.example.venture.R;
 import com.example.venture.viewmodels.explore.UsersViewModel;
@@ -78,6 +78,7 @@ public class ProfileFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout: {
+
                 ((MainActivity)getActivity()).logsOut();
                 return true;
             }

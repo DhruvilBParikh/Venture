@@ -15,24 +15,27 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.venture.Fragments.addevent.AddEventFragment;
 import com.example.venture.Fragments.event.EventFragment;
 import com.example.venture.Fragments.explore.ExploreFragment;
 import com.example.venture.Fragments.history.HistoryFragment;
+import com.example.venture.Fragments.login.LoginFragment;
 import com.example.venture.Fragments.loginSignup.LoginSignupFragment;
 import com.example.venture.Fragments.plan.PlanFragment;
 import com.example.venture.Fragments.login.LoginFragment;
 import com.example.venture.Fragments.profile.EditProfileFragment;
 import com.example.venture.Fragments.signup.SignupFragment;
 import com.example.venture.Fragments.profile.ProfileFragment;
+import com.example.venture.Fragments.signup.SignupFragment;
 import com.example.venture.models.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -174,12 +177,10 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.container, new SignupFragment(), tag);
         transaction.commit();
     }
-
     public void openEventFragment(String eventId, String tag) {
         Log.d(TAG, "openEventFragment: opening event with id: " + eventId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, new EventFragment(eventId), tag);
-//        transaction.addToBackStack(null);
         transaction.commit();
     }
 
