@@ -1,5 +1,6 @@
 package com.example.venture;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -27,6 +30,8 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+
+    public static final String CHANNEL_ID = "NewEventChannel";
 
     private BottomNavigationView bottomNavigation;
     private Boolean isLoggedIn;
@@ -161,15 +166,6 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-
-//    public void changeAppBar() {
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//    }
-
-//    public void hideBottomNavigationBar() {
-//        bottomNavigation.setVisibility(View.GONE);
-//    }
-
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -205,6 +201,18 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         onBackPressed();
         return true;
+    }
+
+    public void sendNotification() {
+        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("A new event was organized around you")
+                .setContentText("Check out!")
+                .setSmallIcon(R.drawable.ic_notification_icon)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .build();
+
+        manager.notify(0, notification);
     }
 
 }
