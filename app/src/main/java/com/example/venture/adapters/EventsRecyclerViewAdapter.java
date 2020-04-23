@@ -7,12 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.venture.MainActivity;
 import com.example.venture.R;
 import com.example.venture.models.Event;
 
@@ -24,11 +24,11 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     private static final String TAG = "RecyclerViewAdapter";
 
     private List<Event> mEvents;
-    private Context mContext;
+    private MainActivity mContext;
 
     public EventsRecyclerViewAdapter(Context mContext, List<Event> eventList) {
         this.mEvents = eventList;
-        this.mContext = mContext;
+        this.mContext = (MainActivity)mContext;
     }
 
     public void setmEvents(List<Event> mEvents) {
@@ -68,7 +68,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: clicked on: " + mEvents.get(position).getTitle());
-                Toast.makeText(mContext, mEvents.get(position).getTitle(), Toast.LENGTH_LONG).show();
+                mContext.openEventFragment(mEvents.get(position).getId(), "");
             }
         });
 
