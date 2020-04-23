@@ -95,7 +95,7 @@ public class ExploreEventListFragment extends Fragment {
     private void setSearchFragment() {
 
         //AUTOCOMPLETE
-        String apiKey = getString(R.string.google_maps_key);
+        String apiKey = "AIzaSyBAA7PGAMSIVpwIJ478qNdiE8VzjL39hOs";
         if (!Places.isInitialized()) {
             Places.initialize(getContext(), apiKey);
         }

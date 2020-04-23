@@ -131,7 +131,7 @@ public class AddEventFragment extends Fragment implements SelectPhotoDialog.OnPh
         mAddEvent = view.findViewById(R.id.buttonAddEvent);
         calendar = Calendar.getInstance();
 
-        String apiKey = "AIzaSyCA0NaAI0q_DC1oagzC8hDnp7r1bv7j8JE";
+        String apiKey = "AIzaSyBAA7PGAMSIVpwIJ478qNdiE8VzjL39hOs";
         if (!Places.isInitialized()) {
             Places.initialize(getContext(), apiKey);
         }
