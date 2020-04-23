@@ -2,6 +2,7 @@ package com.example.venture.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.venture.R;
 import com.example.venture.models.Event;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -32,7 +37,41 @@ public class CreatedEventsRecyclerViewAdapter extends RecyclerView.Adapter<Creat
     }
 
     public void setmEvents(List<Event> mEvents) {
-        this.mEvents = mEvents;
+        iterateThroughEvents(mEvents, 0);
+    }
+
+    public void iterateThroughEvents(final List<Event> eventList, final int position) {
+        final String TAG = "setFirebaseImages";
+        StorageReference mStorageRef;
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+        final long ONE_MEGABYTE = 1024 * 1024;
+
+        if (position >= eventList.size()) {
+
+            this.mEvents = eventList;
+            this.notifyDataSetChanged();
+            return;
+        }
+
+
+        StorageReference imagesRef = mStorageRef.child(eventList.get(position).getImage());
+
+        imagesRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+
+                eventList.get(position).setImageBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                Log.d(TAG, "success-------------" + eventList.get(position).getImageBitmap());
+                iterateThroughEvents(eventList, position + 1);
+
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
     }
 
     @NonNull
@@ -51,8 +90,16 @@ public class CreatedEventsRecyclerViewAdapter extends RecyclerView.Adapter<Creat
 
 //        Log.d(TAG, mEvents.get(position).getImage());
 
-        holder.event_image.setImageResource(R.drawable.sf_trail);
+//        holder.event_image.setImageResource(R.drawable.sf_trail);
 
+        if(mEvents.get(position).getImageBitmap()==null) {
+            Log.d(TAG, "-----Its Null");
+            holder.event_image.setImageResource(R.drawable.default_image);
+        }
+        else {
+            Log.d(TAG, mEvents.get(position).getImageBitmap().toString());
+            holder.event_image.setImageBitmap(mEvents.get(position).getImageBitmap());
+        }
         holder.event_name.setText(mEvents.get(position).getTitle());
         holder.event_location.setText(mEvents.get(position).getLocation());
 

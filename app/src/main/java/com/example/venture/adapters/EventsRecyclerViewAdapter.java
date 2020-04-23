@@ -56,6 +56,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         }
         else {
             Log.d(TAG, mEvents.get(position).getImageBitmap().toString());
+            Log.d(TAG, mEvents.get(position).getImage());
             holder.event_image.setImageBitmap(mEvents.get(position).getImageBitmap());
         }
 

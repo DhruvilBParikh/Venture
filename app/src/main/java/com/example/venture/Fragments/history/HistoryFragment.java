@@ -4,18 +4,17 @@ package com.example.venture.Fragments.history;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.venture.R;
 import com.example.venture.adapters.HistoryRecyclerViewAdapter;
@@ -72,7 +71,7 @@ public class HistoryFragment extends Fragment {
                     noEventsText.setVisibility(View.GONE);
                 }
                 mAdapter.setmEvents(events);
-                mAdapter.notifyDataSetChanged();
+//                mAdapter.notifyDataSetChanged();
             }
         });
     }

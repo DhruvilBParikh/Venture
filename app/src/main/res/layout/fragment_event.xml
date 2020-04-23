@@ -18,6 +18,7 @@
             android:id="@+id/eventImage"
             android:layout_marginTop="0dp"
             android:paddingTop="0dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/sf_trail"
             app:layout_constraintTop_toTopOf="parent" />
 

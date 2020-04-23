@@ -34,7 +34,7 @@ import java.util.List;
 
 public class EventsRepository  {
 
-    
+
     private boolean initListeners = false;
     private ValueEventListener mAllValueEventListener;
     private ValueEventListener mSearchValueEventListener;
@@ -120,7 +120,11 @@ public class EventsRepository  {
                     newEvent.setLocation(snapshot.child("location").getValue().toString());
                     newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
                     newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
-                    newEvent.setImage("rivers.jpg");
+//                    newEvent.setImage("rivers.jpg");
+                    if(snapshot.hasChild("image"))
+                        newEvent.setImage(snapshot.child("image").getValue().toString());
+                    else
+                        newEvent.setImage("default.png");
                     allList.add(newEvent);
 
                 }
@@ -172,7 +176,11 @@ public class EventsRepository  {
                         newEvent.setLocation(snapshot.child("location").getValue().toString());
                         newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
                         newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
-                        newEvent.setImage("rivers.jpg");
+//                        newEvent.setImage("rivers.jpg");
+                        if(snapshot.hasChild("image"))
+                            newEvent.setImage(snapshot.child("image").getValue().toString());
+                        else
+                            newEvent.setImage("default.png");
 
                         searchList.add(newEvent);
                     }
@@ -300,7 +308,10 @@ public class EventsRepository  {
                         newEvent.setId(snapshot.getKey());
                         newEvent.setTitle(snapshot.child("title").getValue().toString());
                         newEvent.setLocation(snapshot.child("location").getValue().toString());
-                        newEvent.setImage(snapshot.child("image").getValue().toString());
+                        if(snapshot.hasChild("image"))
+                            newEvent.setImage(snapshot.child("image").getValue().toString());
+                        else
+                            newEvent.setImage("default.png");
                         createdList.add(newEvent);
                     }
                 }
@@ -344,10 +355,14 @@ public class EventsRepository  {
                         Log.d(TAG, "onDataChange: joined key" + snapshot.getKey());
                         Log.d(TAG, "onDataChange: joined title" + snapshot.child("title").getValue());
                         Log.d(TAG, "onDataChange: joined location" + snapshot.child("location").getValue());
+//                        Log.d(TAG, "onDataChange: joined location" + snapshot.child("image").getValue());
                         newEvent.setId(snapshot.getKey());
                         newEvent.setTitle(snapshot.child("title").getValue().toString());
                         newEvent.setLocation(snapshot.child("location").getValue().toString());
-//                        newEvent.setImage(snapshot.child("image").getValue().toString());
+                        if(snapshot.hasChild("image"))
+                            newEvent.setImage(snapshot.child("image").getValue().toString());
+                        else
+                            newEvent.setImage("default.png");
                         joinedList.add(newEvent);
                     }
                 }
@@ -394,7 +409,10 @@ public class EventsRepository  {
                         newEvent.setId(snapshot.getKey());
                         newEvent.setTitle(snapshot.child("title").getValue().toString());
                         newEvent.setLocation(snapshot.child("location").getValue().toString());
-//                        newEvent.setImage(snapshot.child("image").getValue().toString());
+                        if(snapshot.hasChild("image"))
+                            newEvent.setImage(snapshot.child("image").getValue().toString());
+                        else
+                            newEvent.setImage("default.png");
                         historyList.add(newEvent);
                     }
                 }
@@ -430,7 +448,7 @@ public class EventsRepository  {
                 event = new Event();
 
                 event.setDate(((HashMap)dataSnapshot.getValue()).get("date").toString());
-//                event.setImage(((HashMap)dataSnapshot.getValue()).get("image").toString());
+
                 event.setOrganizerId(((HashMap)dataSnapshot.getValue()).get("organizerId").toString());
                 event.setOrganizer(((HashMap)dataSnapshot.getValue()).get("organizer").toString());
                 event.setLatitude(Double.parseDouble(((HashMap)dataSnapshot.getValue()).get("latitude").toString()));
@@ -439,6 +457,10 @@ public class EventsRepository  {
                 event.setLocation(((HashMap)dataSnapshot.getValue()).get("location").toString());
                 event.setTime(((HashMap)dataSnapshot.getValue()).get("time").toString());
                 event.setTitle(((HashMap)dataSnapshot.getValue()).get("title").toString());
+                if(dataSnapshot.hasChild("image"))
+                    event.setImage(((HashMap)dataSnapshot.getValue()).get("image").toString());
+                else
+                    event.setImage("default.png");
 
                 currentEvent.postValue(event);
 
