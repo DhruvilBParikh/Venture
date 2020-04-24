@@ -42,7 +42,7 @@ public class UsersRepository {
 
     public MutableLiveData<User> getUser(final String userId){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 boolean userExists = dataSnapshot.child(userId).exists();

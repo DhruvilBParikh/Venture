@@ -86,7 +86,7 @@ public class EventFragment extends Fragment {
                         eventObject.put("location", location);
                         eventObject.put("date", date);
                         eventObject.put("time", time);
-//                        eventObject.put("image", image);
+                        eventObject.put("image", image);
                         Log.d(TAG, "onCheckedChanged: adding event to joined events: " + eventObject);
                         EventFragmentViewModel.getInstance().addJoinedEvent(preferences.getString("userId", ""), id, eventObject);
 
@@ -100,7 +100,7 @@ public class EventFragment extends Fragment {
                     Log.d(TAG, "onCheckedChanged: user is not logged in, opening LoginSignupFragment, fragment tag: " + getTag());
                     actionButton.setChecked(false);
                     actionButton.setEnabled(false);
-                    ((MainActivity)getActivity()).openFragment("LOGIN");
+                    ((MainActivity)getActivity()).openFragment(id);
                 }
             }
         });
@@ -142,7 +142,7 @@ public class EventFragment extends Fragment {
                     location = event.getLocation();
                     date = event.getDate();
                     time = event.getTime();
-
+                    image = event.getImage();
                     titleText.setText(event.getTitle());
                     locationText.setText(event.getLocation());
                     dateText.setText(event.getDate());

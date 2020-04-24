@@ -85,9 +85,11 @@ public class ExploreEventListFragment extends Fragment {
                     noEventsText.setVisibility(View.VISIBLE);
                 } else {
                     noEventsText.setVisibility(View.GONE);
-                    mAdapter.setmEvents(events);
-                    mAdapter.notifyDataSetChanged();
+
                 }
+                mAdapter.setmEvents(events);
+                mAdapter.notifyDataSetChanged();
+
             }
         });
     }

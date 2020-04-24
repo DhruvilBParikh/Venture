@@ -124,25 +124,37 @@ public class EventsRepository  {
                 allList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    final Event newEvent = new Event();
+                    String stringDate = snapshot.child("date").getValue() + " " + snapshot.child("time").getValue();
+                    Date date = null;
+                    try {
+                        date = sdf.parse(stringDate);
+                        Log.d(TAG, "onDataChange: date "+date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if(date.after(new Date())) {
 
-                    Log.d(TAG, "onDataChange: " + snapshot.getKey());
-                    Log.d(TAG, "onDataChange: " + snapshot.child("title").getValue());
-                    Log.d(TAG, "onDataChange: " + snapshot.child("location").getValue());
-                    Log.d(TAG, "onDataChange: " + snapshot.child("latitude").getValue());
-                    Log.d(TAG, "onDataChange: " + snapshot.child("longitude").getValue());
 
-                    newEvent.setId(snapshot.getKey());
-                    newEvent.setTitle(snapshot.child("title").getValue().toString());
-                    newEvent.setLocation(snapshot.child("location").getValue().toString());
-                    newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
-                    newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
-//                    newEvent.setImage("rivers.jpg");
-                    if(snapshot.hasChild("image"))
-                        newEvent.setImage(snapshot.child("image").getValue().toString());
-                    else
-                        newEvent.setImage("default.png");
-                    allList.add(newEvent);
+                        final Event newEvent = new Event();
+
+                        Log.d(TAG, "onDataChange: " + snapshot.getKey());
+                        Log.d(TAG, "onDataChange: " + snapshot.child("title").getValue());
+                        Log.d(TAG, "onDataChange: " + snapshot.child("location").getValue());
+                        Log.d(TAG, "onDataChange: " + snapshot.child("latitude").getValue());
+                        Log.d(TAG, "onDataChange: " + snapshot.child("longitude").getValue());
+
+                        newEvent.setId(snapshot.getKey());
+                        newEvent.setTitle(snapshot.child("title").getValue().toString());
+                        newEvent.setLocation(snapshot.child("location").getValue().toString());
+                        newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
+                        newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
+                        //                    newEvent.setImage("rivers.jpg");
+                        if (snapshot.hasChild("image"))
+                            newEvent.setImage(snapshot.child("image").getValue().toString());
+                        else
+                            newEvent.setImage("default.png");
+                        allList.add(newEvent);
+                    }
 
                 }
                 Log.d("-------------------", allList.toString());
@@ -183,23 +195,37 @@ public class EventsRepository  {
                 String searchLocation = location.toLowerCase();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String dbCity = snapshot.child("city").getValue().toString().toLowerCase();
-                    String dbState = snapshot.child("state").getValue().toString().toLowerCase();
-                    Log.d("To search", location);
 
-                    if (searchLocation.equals(dbCity) || searchLocation.equals(dbState)) {
-                        final Event newEvent = new Event();
-                        newEvent.setTitle(snapshot.child("title").getValue().toString());
-                        newEvent.setLocation(snapshot.child("location").getValue().toString());
-                        newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
-                        newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
-//                        newEvent.setImage("rivers.jpg");
-                        if(snapshot.hasChild("image"))
-                            newEvent.setImage(snapshot.child("image").getValue().toString());
-                        else
-                            newEvent.setImage("default.png");
+                    String stringDate = snapshot.child("date").getValue() + " " + snapshot.child("time").getValue();
+                    Date date = null;
+                    try {
+                        date = sdf.parse(stringDate);
+                        Log.d(TAG, "onDataChange: date "+date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    if(date.after(new Date())) {
 
-                        searchList.add(newEvent);
+
+                        String dbCity = snapshot.child("city").getValue().toString().toLowerCase();
+                        String dbState = snapshot.child("state").getValue().toString().toLowerCase();
+                        Log.d("To search", location);
+
+                        if (searchLocation.equals(dbCity) || searchLocation.equals(dbState)) {
+                            final Event newEvent = new Event();
+                            newEvent.setId(snapshot.getKey());
+                            newEvent.setTitle(snapshot.child("title").getValue().toString());
+                            newEvent.setLocation(snapshot.child("location").getValue().toString());
+                            newEvent.setLatitude((Double) snapshot.child("latitude").getValue());
+                            newEvent.setLongitude((Double) snapshot.child("longitude").getValue());
+                            //                        newEvent.setImage("rivers.jpg");
+                            if (snapshot.hasChild("image"))
+                                newEvent.setImage(snapshot.child("image").getValue().toString());
+                            else
+                                newEvent.setImage("default.png");
+
+                            searchList.add(newEvent);
+                        }
                     }
                 }
                 getFirebaseImage(searchList);

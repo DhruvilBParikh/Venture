@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (loginPrompt) {
             Log.d(TAG, "openFragment: user not logged in");
+            getSupportActionBar().setTitle("LOGIN-SIGNUP");
             transaction.replace(R.id.container, new LoginSignupFragment(), tag);
         } else {
             getSupportActionBar().setTitle(tag);
@@ -164,6 +165,10 @@ public class MainActivity extends AppCompatActivity {
                 case "PROFILE":
                     transaction.replace(R.id.container, profileFragment, tag);
                     break;
+                default:
+                    getSupportActionBar().setTitle("EVENT");
+                    transaction.replace(R.id.container, new EventFragment(tag), "EXPLORE");
+                    break;
             }
         }
         transaction.commit();
@@ -171,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void openLoginFragment(String tag) {
         Log.d(TAG, "openLoginFragment: opening login fragment");
+        getSupportActionBar().setTitle("LOGIN");
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, new LoginFragment(), tag);
         transaction.commit();
@@ -178,12 +184,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void openSignupFragment(String tag) {
         Log.d(TAG, "openLoginFragment: opening login fragment");
+        getSupportActionBar().setTitle("SIGNUP");
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, new SignupFragment(), tag);
         transaction.commit();
     }
     public void openEventFragment(String eventId, String tag) {
         Log.d(TAG, "openEventFragment: opening event with id: " + eventId);
+        getSupportActionBar().setTitle("EVENT");
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container, new EventFragment(eventId), tag);
         transaction.commit();
@@ -192,18 +200,10 @@ public class MainActivity extends AppCompatActivity {
     public void openEditProfileFragment(String tag) {
         Log.d(TAG, "openEditProfile: opening an edit profile fragment "+mPreferences.getString("userId",""));
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        getSupportActionBar().setTitle("EDIT PROFILE");
         transaction.replace(R.id.container, new EditProfileFragment(), tag);
-//        transaction.addToBackStack(null);
         transaction.commit();
     }
-
-//    public void changeAppBar() {
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//    }
-
-//    public void hideBottomNavigationBar() {
-//        bottomNavigation.setVisibility(View.GONE);
-//    }
 
     BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {

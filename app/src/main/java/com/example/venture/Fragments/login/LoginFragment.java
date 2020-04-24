@@ -103,7 +103,8 @@ public class LoginFragment extends Fragment {
                     Log.d(TAG, "signInWithEmail:success");
                     FirebaseUser currentUser = mAuth.getCurrentUser();
                     String userId = currentUser.getUid();
-
+                    Log.d(TAG, "onComplete: email::::::"+currentUser.getEmail());
+                    Log.d(TAG, "onComplete: userId:::::"+currentUser.getUid());
                     usersViewModel.getUser(userId).observe(getViewLifecycleOwner(), new Observer<User>() {
                         @Override
                         public void onChanged(User user) {
@@ -111,6 +112,7 @@ public class LoginFragment extends Fragment {
                             Log.d(TAG, "onComplete: Log in user::::::::::::::::"+ loggedInUser.getName());
                             Log.d(TAG, "onComplete: Log in user::::::::::::::::"+ loggedInUser.getId());
                             Log.d(TAG, "onComplete: Log in user::::::::::::::::"+ loggedInUser.getName());
+                            Log.d(TAG, "onChanged: getting tag:::::::::::::::::::::::::"+ getTag());
                             ((MainActivity) getActivity()).logsIn(getTag(), loggedInUser);
                         }
                     });

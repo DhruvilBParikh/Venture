@@ -69,8 +69,8 @@ public class HistoryFragment extends Fragment {
                     noEventsText.setVisibility(View.VISIBLE);
                 } else {
                     noEventsText.setVisibility(View.GONE);
+                    mAdapter.setmEvents(events);
                 }
-                mAdapter.setmEvents(events);
 //                mAdapter.notifyDataSetChanged();
             }
         });
