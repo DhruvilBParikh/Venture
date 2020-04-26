@@ -94,7 +94,7 @@ public class AddEventFragment extends Fragment implements SelectPhotoDialog.OnPh
     SimpleDateFormat _12HourSDF = new SimpleDateFormat("hh:mm a");
 
     private Place mPlace;
-    private String location;
+    private String location="";
     private LatLng latLng;
     private String city;
     private String state;

@@ -58,5 +58,6 @@
     <string name="event_date_title">Event Date</string>
     <string name="event_description_title">Event Description</string>
     <string name="event_title">Event Title</string>
+    <string name="city_state">Search by City or State</string>
 
 </resources>

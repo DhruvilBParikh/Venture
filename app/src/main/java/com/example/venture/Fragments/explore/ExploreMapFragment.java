@@ -179,7 +179,8 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
     }
     private void moveCamera(LatLng latLng, float zoom){
         Log.d(TAG, "moveCamera: moving the camera to: lat: " + latLng.latitude + ", lng: " + latLng.longitude );
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,zoom));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
     public void addEventMarker(String id, LatLng latLng, String title, String location) {
         Log.d(TAG, "addMarker: " + title);
@@ -198,7 +199,7 @@ public class ExploreMapFragment extends Fragment implements OnMapReadyCallback, 
                     .snippet(location);
             Marker marker = mMap.addMarker(options);
             marker.setTag(id);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
         }
     }
     public void toastNotification(String message) {
