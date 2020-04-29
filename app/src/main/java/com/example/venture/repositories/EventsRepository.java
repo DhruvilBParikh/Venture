@@ -71,7 +71,9 @@ public class EventsRepository  {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
     
-    private boolean joinedEventCheck;
+    private MutableLiveData<Boolean> joinedEventCheck = new MutableLiveData<>();
+    private MutableLiveData<String> eventUri = new MutableLiveData<>();
+
 
     public static EventsRepository getInstance() {
         if (instance == null) {
@@ -81,7 +83,7 @@ public class EventsRepository  {
         return instance;
     }
 
-    public void addEvent(final Event event, final String userId, final String eventId) {
+    public void addEvent(final Event event, final String userId, final String eventId, String eventUri) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
         Log.d(TAG, "addEvent: "+event.getTitle());
 //        final String[] eventId = {""};
@@ -94,10 +96,12 @@ public class EventsRepository  {
         eventMap.put("date", event.getDate());
         eventMap.put("time", event.getTime());
         eventMap.put("image", event.getImage());
-        addCreatedEvent(eventMap, eventId,userId);
+
+        addCreatedEvent(eventMap, eventId,userId, eventUri);
 
 
     }
+
     public MutableLiveData<List<Event>> getEvents(String eventType, String location) {
         if(!initListeners)
             initListeners();
@@ -170,7 +174,6 @@ public class EventsRepository  {
         };
 
     }
-
 
     private void loadAllEvents() {
 
@@ -278,7 +281,6 @@ public class EventsRepository  {
 
     }
 
-
     private void finaldone(List<Event> eventList){
 
         Log.d(TAG,"========got all image values========"+eventList.toString());
@@ -286,32 +288,10 @@ public class EventsRepository  {
 
     }
 
-
-    /////dhruvil's code
-     public void addEvent(final Event event, final String userId) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("events");
-        Log.d(TAG, "addEvent: "+event.getTitle());
-        final String[] eventId = {""};
-        reference.push().setValue(event, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                eventId[0] = databaseReference.getKey();
-                Log.d(TAG, "addEvent: event id is::::" + eventId[0]);
-                HashMap<String, String> eventMap = new HashMap<>();
-                eventMap.put("title", event.getTitle());
-                eventMap.put("location", event.getLocation());
-                eventMap.put("date", event.getDate());
-                eventMap.put("time", event.getTime());
-                eventMap.put("image", event.getImage());
-                addCreatedEvent(eventMap, eventId[0],userId);
-            }
-        });
-
-    }
-
-    public void addCreatedEvent(HashMap<String, String> eventMap, String eventId, String userId) {
+    public void addCreatedEvent(HashMap<String, String> eventMap, String eventId, String userId, String eventUri) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         reference.child("createdEvents").child(userId).child(eventId).setValue(eventMap);
+        eventMap.put("eventUri", eventUri);
         reference.child("joinedEvents").child(userId).child(eventId).setValue(eventMap);
     }
 
@@ -500,6 +480,7 @@ public class EventsRepository  {
                 event.setLocation(((HashMap)dataSnapshot.getValue()).get("location").toString());
                 event.setTime(((HashMap)dataSnapshot.getValue()).get("time").toString());
                 event.setTitle(((HashMap)dataSnapshot.getValue()).get("title").toString());
+//                event.setEventUri(((HashMap)dataSnapshot.getValue()).get("eventUri").toString());
                 if(dataSnapshot.hasChild("image"))
                     event.setImage(((HashMap)dataSnapshot.getValue()).get("image").toString());
                 else
@@ -517,24 +498,25 @@ public class EventsRepository  {
 
     }
 
-    public boolean hasJoinedEvent(final String userId, final String eventId) {
+    public MutableLiveData<Boolean> hasJoinedEvent(final String userId, final String eventId) {
         Log.d(TAG, "hasJoinedEvent: checking if user: " + userId + " has joined event: " + eventId);
-
-        mDatabase.child("joinedEvents").addValueEventListener(new ValueEventListener() {
+        final DatabaseReference mreference = mDatabase.child("joinedEvents");
+        mreference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: snapshot"+dataSnapshot);
                 if(dataSnapshot.hasChild(userId)) {
                     Log.d(TAG, "onDataChange: user key exists");
                     if(dataSnapshot.child(userId).hasChild(eventId)) {
                         Log.d(TAG, "hasJoinedEvent: event key exists");
-                        joinedEventCheck = true;
+                        joinedEventCheck.postValue(true);
                     } else {
                         Log.d(TAG, "hasJoinedEvent: event key does not exists");
-                        joinedEventCheck = false;
+                        joinedEventCheck.postValue(false);
                     }
                 } else {
                     Log.d(TAG, "hasJoinedEvent: user key does not exists");
-                    joinedEventCheck = false;
+                    joinedEventCheck.postValue(false);
                 }
             }
 
@@ -545,6 +527,41 @@ public class EventsRepository  {
         });
         return joinedEventCheck;
     }
+
+    public MutableLiveData<String> getEventUri(final String userId, final String eventId) {
+        Log.d(TAG, "getEventUri:  getting event uri: from " + userId + " and event: " + eventId);
+
+        mDatabase.child("joinedEvents").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                Log.d(TAG, "onDataChange: "+((HashMap)dataSnapshot.child(userId).child(eventId).getValue()).get("eventUri"));
+
+
+                Log.d(TAG, "onDataChange: snapshot in getting uri::::"+ dataSnapshot);
+                if(dataSnapshot.hasChild(userId)){
+                    if(((HashMap)dataSnapshot.child(userId).child(eventId).getValue()).containsKey("eventUri")) {
+                        Log.d(TAG, "onDataChange: event uri::::"+(    (HashMap)dataSnapshot.child(userId).child(eventId).getValue() ).get("eventUri").toString()) ;
+                        eventUri.postValue((    (HashMap)dataSnapshot.child(userId).child(eventId).getValue() ).get("eventUri").toString());
+                        Log.d(TAG, "onDataChange: user key exists"+eventUri);
+
+                    } else {
+                        eventUri.postValue("");
+                        Log.d(TAG, "onDataChange: eventuri:::::"+ eventUri);
+
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        return eventUri;
+    }
+
 
     public void addJoinedEvent(String userId, String eventId, HashMap<String, String> eventObj) {
         Log.d(TAG, "addJoinedEvent: adding to joined events");
