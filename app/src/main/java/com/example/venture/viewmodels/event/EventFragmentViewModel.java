@@ -34,8 +34,12 @@ public class EventFragmentViewModel extends ViewModel {
         return event;
     }
 
-    public boolean hasJoinedEvent(String userId, String eventid) {
-        return EventsRepository.getInstance().hasJoinedEvent(userId, eventid);
+    public LiveData<Boolean> hasJoinedEvent(String userId, String eventId) {
+        return EventsRepository.getInstance().hasJoinedEvent(userId, eventId);
+    }
+
+    public LiveData<String> getEventUri(String userId, String eventId) {
+        return EventsRepository.getInstance().getEventUri(userId, eventId);
     }
 
     public void addJoinedEvent(String userId, String eventId,  HashMap<String, String> eventObj) {

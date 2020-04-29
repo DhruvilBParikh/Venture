@@ -4,6 +4,8 @@ package com.example.venture.Fragments.addevent;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -20,6 +22,7 @@ import androidx.fragment.app.Fragment;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.provider.CalendarContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -266,13 +269,17 @@ public class AddEventFragment extends Fragment implements SelectPhotoDialog.OnPh
         Log.d(TAG, "verifyPermissions: asking user for permissions");
         String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA};
+                Manifest.permission.CAMERA, Manifest.permission.WRITE_CALENDAR,Manifest.permission.READ_CALENDAR};
         if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
                 permissions[0])== PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
                         permissions[1])== PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
-                        permissions[2])== PackageManager.PERMISSION_GRANTED) {
+                        permissions[2])== PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                        permissions[3])== PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                        permissions[4])== PackageManager.PERMISSION_GRANTED) {
             openDialog();
         } else {
             requestPermissions(permissions,REQUEST_CODE);
@@ -429,6 +436,7 @@ public class AddEventFragment extends Fragment implements SelectPhotoDialog.OnPh
     }
 
     private void setupData(){
+
         Event event = new Event();
         event.setTitle(mTitle.getText().toString());
         event.setDetails(mDetails.getText().toString());
@@ -444,7 +452,34 @@ public class AddEventFragment extends Fragment implements SelectPhotoDialog.OnPh
         event.setOrganizer(organizer);
         Log.d(TAG, "setupData: city:"+city);
         Log.d(TAG, "setupData: state:"+state);
-        mEventViewModel.addEvent(event, userId, eventId);
+
+        ContentResolver cr = getActivity().getContentResolver();
+        ContentValues cv = new ContentValues();
+
+        Calendar start = Calendar.getInstance();
+        start.set(mYear,mMonth, mDayOfMonth,mHourOfDay,mMinute);
+        Calendar end = Calendar.getInstance();
+        end.set(mYear,mMonth, mDayOfMonth,mHourOfDay+1,mMinute);
+
+        cv.put(CalendarContract.Events.CALENDAR_ID,3);
+        cv.put(CalendarContract.Events.TITLE, mTitle.getText().toString());
+        cv.put(CalendarContract.Events.DESCRIPTION, mDetails.getText().toString());
+        cv.put(CalendarContract.Events.EVENT_LOCATION, location);
+        cv.put(CalendarContract.Events.DTSTART, start.getTimeInMillis());
+        cv.put(CalendarContract.Events.DTEND, end.getTimeInMillis());
+        cv.put(CalendarContract.Events.EVENT_TIMEZONE, Calendar.getInstance().getTimeZone().getID());
+
+        Uri eventUri = cr.insert(CalendarContract.Events.CONTENT_URI, cv);
+
+        ContentValues cv1 = new ContentValues();
+        cv1.put(CalendarContract.Reminders.EVENT_ID,eventUri.getLastPathSegment());
+        cv1.put(CalendarContract.Reminders.MINUTES,60);
+
+        cr.insert(CalendarContract.Reminders.CONTENT_URI, cv1);
+        Log.d(TAG, "onClick: uri "+ eventUri);
+
+
+        mEventViewModel.addEvent(event, userId, eventId, eventUri.toString());
         ((MainActivity)getActivity()).openFragment("EXPLORE");
     }
 

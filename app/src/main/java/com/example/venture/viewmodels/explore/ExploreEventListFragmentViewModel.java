@@ -41,8 +41,8 @@ public class ExploreEventListFragmentViewModel extends ViewModel {
         return resultEvents;
     }
 
-    public void addEvent(Event event, String userId, String eventId) {
-        EventsRepository.getInstance().addEvent(event, userId, eventId);
+    public void addEvent(Event event, String userId, String eventId, String eventUri) {
+        EventsRepository.getInstance().addEvent(event, userId, eventId, eventUri);
     }
     
 //    public void addEvents(final List<Event> addevent) {

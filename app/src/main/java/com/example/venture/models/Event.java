@@ -19,6 +19,7 @@ public class Event {
     private String city;
     private String state;
     private String desc;
+    private String eventUri;
 
     public Event() {
         this.id = null;
@@ -32,6 +33,7 @@ public class Event {
         this.time = null;
         this.desc = null;
         this.organizer = null;
+        this.eventUri = null;
     }
 
 
@@ -155,5 +157,13 @@ public class Event {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public String getEventUri() {
+        return eventUri;
+    }
+
+    public void setEventUri(String eventUri) {
+        this.eventUri = eventUri;
     }
 }
