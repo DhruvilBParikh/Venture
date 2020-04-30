@@ -539,15 +539,17 @@ public class EventsRepository  {
 
                 Log.d(TAG, "onDataChange: snapshot in getting uri::::"+ dataSnapshot);
                 if(dataSnapshot.hasChild(userId)){
-                    if(((HashMap)dataSnapshot.child(userId).child(eventId).getValue()).containsKey("eventUri")) {
-                        Log.d(TAG, "onDataChange: event uri::::"+(    (HashMap)dataSnapshot.child(userId).child(eventId).getValue() ).get("eventUri").toString()) ;
-                        eventUri.postValue((    (HashMap)dataSnapshot.child(userId).child(eventId).getValue() ).get("eventUri").toString());
-                        Log.d(TAG, "onDataChange: user key exists"+eventUri);
+                    if(dataSnapshot.child(userId).hasChild(eventId)){
+                        if(((HashMap)dataSnapshot.child(userId).child(eventId).getValue()).containsKey("eventUri")) {
+                            Log.d(TAG, "onDataChange: event uri::::"+(    (HashMap)dataSnapshot.child(userId).child(eventId).getValue() ).get("eventUri").toString()) ;
+                            eventUri.postValue((    (HashMap)dataSnapshot.child(userId).child(eventId).getValue() ).get("eventUri").toString());
+                            Log.d(TAG, "onDataChange: user key exists"+eventUri);
 
-                    } else {
-                        eventUri.postValue("");
-                        Log.d(TAG, "onDataChange: eventuri:::::"+ eventUri);
+                        } else {
+                            eventUri.postValue("");
+                            Log.d(TAG, "onDataChange: eventuri:::::"+ eventUri);
 
+                        }
                     }
                 }
 

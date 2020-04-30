@@ -19,7 +19,7 @@
             android:layout_marginTop="0dp"
             android:paddingTop="0dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/sf_trail"
+            android:src="@drawable/default_image"
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
